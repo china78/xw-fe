@@ -1,12 +1,26 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import {
+  MemoryRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from 'react-router-dom';
 import { Button } from 'antd';
 import { FolderOpenOutlined } from '@ant-design/icons';
+import Editor from './pages/editor';
 import './App.css';
 
 function OutSide() {
-  window.electron.ipcRenderer.on('open-folder-dialog', (arg) => {
-    console.log('arg: ', arg);
-  });
+  const navigator = useNavigate();
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('open-folder-dialog', (arg) => {
+      console.log('arg: ', arg);
+      if (arg) {
+        navigator('editor');
+      }
+    });
+  }, [navigator]);
 
   const handleOpenFolder = () => {
     window.electron.ipcRenderer.sendMessage('open-folder-dialog');
@@ -30,6 +44,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<OutSide />} />
+        <Route path="/editor" element={<Editor />} />
       </Routes>
     </Router>
   );
