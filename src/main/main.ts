@@ -13,7 +13,7 @@ import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
+import { readDirectoryAsync, resolveHtmlPath } from './util';
 
 class AppUpdater {
   constructor() {
@@ -34,16 +34,20 @@ ipcMain.on('ipc-example', async (event, arg) => {
 /**
  * 打开文件夹
  */
-ipcMain.on('open-folder-dialog', () => {
-  dialog
-    .showOpenDialog(mainWindow!, { properties: ['openDirectory'] })
-    .then((result) => {
-      if (!result.canceled && result.filePaths.length > 0) {
-        const selectedDirectory = result.filePaths[0];
-        mainWindow?.webContents.send('open-folder-dialog', selectedDirectory);
-      }
-    })
-    .catch((err) => console.error(err));
+ipcMain.on('open-folder-dialog', async () => {
+  try {
+    const result = await dialog.showOpenDialog(mainWindow!, {
+      properties: ['openDirectory'],
+    });
+    if (!result.canceled && result.filePaths.length > 0) {
+      const selectedDirectory = result.filePaths[0];
+      const projectStructure = await readDirectoryAsync(selectedDirectory);
+      console.log(projectStructure);
+      mainWindow?.webContents.send('project-structure', projectStructure);
+    }
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
