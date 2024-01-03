@@ -3,7 +3,6 @@ import { Tree } from 'antd';
 import type { DirectoryTreeProps } from 'antd/es/tree';
 import { Directory } from '../../main/util';
 import ResizableSider from '../components/ResizableSider';
-import 'react-resizable/css/styles.css';
 
 interface Props {
   treeData: Directory[];
@@ -29,35 +28,29 @@ export default function Editor(props: Props) {
 
   const siderStyle: React.CSSProperties = {
     width: `${width}px`,
+    padding: 10,
   };
 
   const contentStyle: React.CSSProperties = {
     flex: '1',
-    padding: '16px',
+    // padding: '16px',
   };
 
   return (
     <div style={layoutStyle}>
       <div style={siderStyle}>
-        <ResizableSider
-          width={width}
-          setWidth={setWidth}
+        <DirectoryTree
+          multiple
+          defaultExpandAll
           onSelect={onSelect}
           onExpand={onExpand}
           treeData={treeData}
-        >
-          <DirectoryTree
-            style={{ height: '100vh' }}
-            multiple
-            defaultExpandAll
-            onSelect={onSelect}
-            onExpand={onExpand}
-            treeData={treeData}
-          />
-        </ResizableSider>
+        />
       </div>
       <div style={contentStyle}>
-        <div>代码展示区域</div>
+        <ResizableSider width={width} setWidth={setWidth}>
+          <div>代码展示区域</div>
+        </ResizableSider>
       </div>
     </div>
   );

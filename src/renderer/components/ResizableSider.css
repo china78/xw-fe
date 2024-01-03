@@ -1,5 +1,20 @@
-.resizable-handle {
-  width: 10px;
-  height: 100%;
+.handlebox {
+  display: flex;
+}
+
+.content {
+  flex-grow: 1; /* 让内容区域占据剩余的空间 */
+  padding: 10px;
+}
+
+.handle {
+  width: 4px; /* 改为更宽的宽度 */
+  height: 100vh;
+  background-color: #d9d9d9;
   cursor: ew-resize;
+  transition: background-color 0.3s; /* 添加过渡效果 */
+}
+
+.handle:hover {
+  background-color: #a6a6a6; /* 滑过时的高亮颜色 */
 }

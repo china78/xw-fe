@@ -1,21 +1,26 @@
-import 'react-resizable/css/styles.css';
-import { ResizableBox } from 'react-resizable';
+import Draggable from 'react-draggable';
 import './ResizableSider.css';
 
 export default function ResizableSider(props: any) {
-  const { width, children } = props;
+  const { width, children, setWidth } = props;
 
-  console.log('Before return:', width);
+  const handleDrag = (e: any, ui: { deltaX: any }) => {
+    setWidth(width + ui.deltaX);
+  };
 
   return (
-    <ResizableBox
-      width={width}
-      height={Infinity}
-      draggableOpts={{ grid: [25, 25] }}
-      minConstraints={[100, 100]}
-      maxConstraints={[300, 300]}
+    <Draggable
+      axis="x"
+      handle=".handle"
+      defaultPosition={{ x: 0, y: 0 }}
+      grid={[1, 1]}
+      scale={1.5}
+      onDrag={handleDrag}
     >
-      <span>{children}</span>
-    </ResizableBox>
+      <div className="handlebox">
+        <div className="handle" />
+        <div className="content">{children}</div>
+      </div>
+    </Draggable>
   );
 }
