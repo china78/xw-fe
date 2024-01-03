@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Tree } from 'antd';
 import type { DirectoryTreeProps } from 'antd/es/tree';
 import { Directory } from '../../main/util';
 import ResizableSider from '../components/ResizableSider';
-import EditorMainCintent from '../components/EditorMainCintent';
+import EditorMainContent from '../components/EditorMainContent';
 
 interface Props {
   treeData: Directory[];
@@ -59,6 +59,15 @@ export default function Editor(props: Props) {
     // padding: '16px',
   };
 
+  const fileExtension = useMemo(() => {
+    // 使用字符串方法获取文件扩展名
+    const extension = selectedFilePath.substring(
+      selectedFilePath.lastIndexOf('.'),
+    );
+    // 去掉文件扩展名前面的点 (.)
+    return extension ?? '';
+  }, [selectedFilePath]);
+
   return (
     <div style={layoutStyle}>
       <div style={siderStyle}>
@@ -75,7 +84,12 @@ export default function Editor(props: Props) {
       <div style={contentStyle}>
         <ResizableSider width={width} setWidth={setWidth}>
           <div>tabs区域</div>
-          <EditorMainCintent fileContent={selectedFileContent} />
+          {selectedFileContent && (
+            <EditorMainContent
+              fileContent={selectedFileContent}
+              fileExtension={fileExtension}
+            />
+          )}
         </ResizableSider>
       </div>
     </div>

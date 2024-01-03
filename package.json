@@ -96,10 +96,13 @@
     }
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
     "antd": "^5.12.6",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
+    "monaco-editor": "^0.45.0",
+    "monaco-editor-webpack-plugin": "^7.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.6",
