@@ -9,6 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
+import fs from 'fs';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -48,6 +49,18 @@ ipcMain.on('open-folder-dialog', async () => {
   } catch (error) {
     console.error(error);
   }
+});
+
+// 读取指定的文件路径
+ipcMain.on('get-file-content', (event, filePath) => {
+  // 异步读取文件
+  fs.readFile(filePath, 'utf-8', (err, content) => {
+    if (err) {
+      event.sender.send('file-content', null, { err: err.message });
+    } else {
+      event.sender.send('file-content', null, { content });
+    }
+  });
 });
 
 if (process.env.NODE_ENV === 'production') {

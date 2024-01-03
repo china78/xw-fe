@@ -22,24 +22,22 @@ export type Directory = {
 
 export async function readDirectoryAsync(
   dirPath: string,
-  parentKey: string = '0',
 ): Promise<Directory[]> {
   try {
     const items = await readdir(dirPath, { withFileTypes: true });
 
     const results: Directory[] = await Promise.all(
-      items.map(async (item, index) => {
+      items.map(async (item) => {
         const itemPath = path.join(dirPath, item.name);
-        const currentKey = `${parentKey}_${index}`;
         const isDirectory = item.isDirectory();
 
         return isDirectory
           ? {
-              key: currentKey,
+              key: itemPath,
               title: item.name,
-              children: await readDirectoryAsync(itemPath, currentKey),
+              children: await readDirectoryAsync(itemPath),
             }
-          : { key: currentKey, title: item.name, isLeaf: true };
+          : { key: itemPath, title: item.name, isLeaf: true };
       }),
     );
 

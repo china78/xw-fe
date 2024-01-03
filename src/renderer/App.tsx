@@ -19,8 +19,7 @@ function OutSide(props: OutSideProps) {
   const navigator = useNavigate();
 
   useEffect(() => {
-    window.electron.ipcRenderer.on('project-structure', (arg) => {
-      console.log('arg: ', arg);
+    window.electron.ipcRenderer.on('project-structure', (arg: any) => {
       if (arg) {
         setTree(arg);
         navigator('editor');

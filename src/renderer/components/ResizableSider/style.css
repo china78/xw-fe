@@ -10,7 +10,7 @@
 .handle {
   width: 4px; /* 改为更宽的宽度 */
   height: 100vh;
-  background-color: #d9d9d9;
+  background-color: #eaeaea;
   cursor: ew-resize;
   transition: background-color 0.3s; /* 添加过渡效果 */
 }

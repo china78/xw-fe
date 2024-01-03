@@ -1,5 +1,5 @@
 import Draggable from 'react-draggable';
-import './ResizableSider.css';
+import './style.css';
 
 export default function ResizableSider(props: any) {
   const { width, children, setWidth } = props;
