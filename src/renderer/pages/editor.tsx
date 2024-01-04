@@ -21,6 +21,7 @@ import {
   setFileContent,
   setFileName,
 } from '../store/EditorTabs/EditorTabSlice';
+import FeedBack from '../components/FeedBack';
 
 interface Props {
   treeData: Directory[];
@@ -31,10 +32,33 @@ export default function Editor(props: Props) {
   // const [width, setWidth] = useState(200);
   const [pannelOpen, setPannelOpen] = useState(true);
   const [selectedFilePath, setSelectedFilePath] = useState<string>('');
+  const [eventTitle, setEventTitle] = useState('');
+  const [openDraw, setOpenDraw] = useState(false);
   const dispatch = useDispatch();
   const { DirectoryTree } = Tree;
   const tabs = useSelector(selectTabs);
   const selectedFileContent = useSelector(selectFileContent);
+
+  const floatButtonInfo = [
+    {
+      tooltip: '解释当前代码',
+      icon: <RobotOutlined />,
+    },
+    {
+      tooltip: '评估代码质量',
+      icon: <PlayCircleOutlined />,
+      type: 'primary',
+    },
+    {
+      tooltip: '优化当前代码',
+      icon: <SmileOutlined />,
+    },
+    {
+      tooltip: null,
+      icon: <DoubleLeftOutlined />,
+      // type: 'primary',
+    },
+  ];
 
   // 预先注册点击事件，以备当文件被点击，显示对应的代码内容
   useEffect(() => {
@@ -44,7 +68,6 @@ export default function Editor(props: Props) {
         console.error(err);
       } else {
         console.log(content);
-        // setSelectedFileContent(content);
         dispatch(setFileContent(content));
       }
     });
@@ -82,12 +105,6 @@ export default function Editor(props: Props) {
     minHeight: '100vh',
   };
 
-  // const siderStyle: React.CSSProperties = {
-  //   width: `${width}px`,
-  //   padding: 10,
-  //   // flex: '0 0 auto',
-  // };
-
   const contentStyle: React.CSSProperties = {
     flex: '1',
     overflowY: 'auto',
@@ -112,6 +129,11 @@ export default function Editor(props: Props) {
       />
     );
   }, [pannelOpen]);
+
+  const handleFloatBtn = (title: string) => {
+    title && setEventTitle(title);
+    setOpenDraw(true);
+  };
 
   return (
     <div style={layoutStyle}>
@@ -138,13 +160,15 @@ export default function Editor(props: Props) {
           <div className="headerBox">
             <EditorTabs />
             <FloatButton.Group shape="square" style={{ right: 40, top: 90 }}>
-              <FloatButton tooltip="解释当前代码" icon={<RobotOutlined />} />
-              <FloatButton
-                icon={<PlayCircleOutlined />}
-                type="primary"
-                tooltip="评估代码质量"
-              />
-              <FloatButton icon={<SmileOutlined />} tooltip="优化当前代码" />
+              {floatButtonInfo.map((button) => (
+                <FloatButton
+                  key={button.tooltip}
+                  tooltip={button.tooltip ?? '展开面板'}
+                  icon={button.icon}
+                  type={button.type}
+                  onClick={() => handleFloatBtn(button.tooltip)}
+                />
+              ))}
             </FloatButton.Group>
           </div>
         )}
@@ -158,6 +182,11 @@ export default function Editor(props: Props) {
         )}
         {/* </ResizableSider> */}
       </div>
+      <FeedBack
+        title={eventTitle}
+        openDraw={openDraw}
+        setOpenDraw={setOpenDraw}
+      />
     </div>
   );
 }
