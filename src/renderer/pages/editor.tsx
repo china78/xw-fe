@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { PlayCircleOutlined } from '@ant-design/icons';
-import { Tree, FloatButton, Tooltip } from 'antd';
+import {
+  PlayCircleOutlined,
+  RobotOutlined,
+  SmileOutlined,
+} from '@ant-design/icons';
+import { Tree, FloatButton } from 'antd';
 import type { DirectoryTreeProps } from 'antd/es/tree';
 import { useDispatch, useSelector } from 'react-redux';
 import { Directory } from '../../main/util';
@@ -113,13 +117,15 @@ export default function Editor(props: Props) {
           {tabs.length > 0 && (
             <div className="headerBox">
               <EditorTabs />
-              <Tooltip title="分析当前文件内容">
+              <FloatButton.Group shape="square" style={{ right: 40, top: 90 }}>
+                <FloatButton tooltip="解释当前代码" icon={<RobotOutlined />} />
                 <FloatButton
                   icon={<PlayCircleOutlined />}
                   type="primary"
-                  style={{ right: 40, top: 90 }}
+                  tooltip="评估代码质量"
                 />
-              </Tooltip>
+                <FloatButton icon={<SmileOutlined />} tooltip="优化当前代码" />
+              </FloatButton.Group>
             </div>
           )}
           {selectedFileContent && (
