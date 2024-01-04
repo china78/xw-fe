@@ -9,11 +9,13 @@ interface InitialState {
   tabs: Tabs[];
   activeKey: string;
   fileName: string;
+  fileContent: string;
 }
 const initialState: InitialState = {
   tabs: [],
   activeKey: '',
   fileName: '',
+  fileContent: '',
 };
 
 export const editorTabsSlice = createSlice({
@@ -35,10 +37,13 @@ export const editorTabsSlice = createSlice({
     setFileName: (state, action) => {
       state.activeKey = action.payload;
     },
+    setFileContent: (state, action) => {
+      state.fileContent = action.payload;
+    },
   },
 });
 
-export const { addTab, removeTab, setActiveKey, setFileName } =
+export const { addTab, removeTab, setActiveKey, setFileName, setFileContent } =
   editorTabsSlice.actions;
 
 export const selectTabs = (state: { editorTabs: { tabs: Tabs[] } }) =>
@@ -49,5 +54,9 @@ export const selectActiveKey = (state: { editorTabs: { activeKey: string } }) =>
 
 export const selectFileName = (state: { editorTabs: { fileName: string } }) =>
   state.editorTabs.fileName;
+
+export const selectFileContent = (state: {
+  editorTabs: { fileContent: string };
+}) => state.editorTabs.fileContent;
 
 export default editorTabsSlice.reducer;

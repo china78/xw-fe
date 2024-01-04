@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Tree } from 'antd';
+import { PlayCircleOutlined } from '@ant-design/icons';
+import { Tree, FloatButton, Tooltip } from 'antd';
 import type { DirectoryTreeProps } from 'antd/es/tree';
 import { useDispatch, useSelector } from 'react-redux';
 import { Directory } from '../../main/util';
@@ -8,8 +9,10 @@ import EditorMainContent from '../components/EditorMainContent';
 import EditorTabs from '../components/EditorTabs';
 import {
   addTab,
+  selectFileContent,
   selectTabs,
   setActiveKey,
+  setFileContent,
   setFileName,
 } from '../store/EditorTabs/EditorTabSlice';
 
@@ -21,10 +24,10 @@ export default function Editor(props: Props) {
   const { treeData } = props;
   const [width, setWidth] = useState(200);
   const [selectedFilePath, setSelectedFilePath] = useState<string>('');
-  const [selectedFileContent, setSelectedFileContent] = useState(null);
   const dispatch = useDispatch();
   const { DirectoryTree } = Tree;
   const tabs = useSelector(selectTabs);
+  const selectedFileContent = useSelector(selectFileContent);
 
   // 预先注册点击事件，以备当文件被点击，显示对应的代码内容
   useEffect(() => {
@@ -34,10 +37,11 @@ export default function Editor(props: Props) {
         console.error(err);
       } else {
         console.log(content);
-        setSelectedFileContent(content);
+        // setSelectedFileContent(content);
+        dispatch(setFileContent(content));
       }
     });
-  }, []);
+  }, [dispatch]);
 
   // 每次点要去tabs[]检查是否已经有label(文件名)存在的文件了，有的话，不添加，把key设置为activeKey
   const triggerTab = (filePath: string, filename: string) => {
@@ -106,7 +110,18 @@ export default function Editor(props: Props) {
       </div>
       <div style={contentStyle}>
         <ResizableSider width={width} setWidth={setWidth}>
-          {tabs.length > 0 && <EditorTabs />}
+          {tabs.length > 0 && (
+            <div className="headerBox">
+              <EditorTabs />
+              <Tooltip title="分析当前文件内容">
+                <FloatButton
+                  icon={<PlayCircleOutlined />}
+                  type="primary"
+                  style={{ right: 40, top: 90 }}
+                />
+              </Tooltip>
+            </div>
+          )}
           {selectedFileContent && (
             <div className="monaco-container">
               <EditorMainContent

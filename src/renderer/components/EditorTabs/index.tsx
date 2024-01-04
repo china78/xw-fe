@@ -6,6 +6,7 @@ import {
   setActiveKey,
   selectTabs,
   selectActiveKey,
+  setFileContent,
 } from '../../store/EditorTabs/EditorTabSlice';
 
 type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
@@ -23,8 +24,12 @@ export default function EditorTabs() {
 
   const remove = (targetKey: TargetKey) => {
     dispatch(removeTab({ key: targetKey.toString() }));
-    const newActiveKey = tabs.length > 1 ? tabs[tabs.length - 2].key : '';
+    const haveTab = tabs.length > 1;
+    const newActiveKey = haveTab ? tabs[tabs.length - 2].key : '';
     dispatch(setActiveKey(newActiveKey));
+    if (!haveTab) {
+      dispatch(setFileContent(''));
+    }
   };
 
   const onEdit = (targetKey: TargetKey, action: 'add' | 'remove') => {
@@ -44,6 +49,7 @@ export default function EditorTabs() {
   return (
     <Tabs
       hideAdd
+      size="small"
       onChange={onChange}
       activeKey={activeKey}
       type="editable-card"

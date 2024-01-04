@@ -38,7 +38,9 @@ export default function EditorMainCintent(props: Props) {
 
     // 更新编辑器的语言和内容
     if (editorRef.current) {
-      editorRef.current.setModel(monaco.editor.createModel(fileContent, mappedLanguage));
+      editorRef.current.setModel(
+        monaco.editor.createModel(fileContent, mappedLanguage),
+      );
     }
 
     // 在组件卸载时销毁编辑器实例

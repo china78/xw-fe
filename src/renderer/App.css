@@ -19,3 +19,9 @@ body {
   height: 100%; /* 或者设置一个具体的高度 */
   overflow: hidden; /* 或者根据需要使用其他的 overflow 属性 */
 }
+
+.headerBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
