@@ -107,7 +107,7 @@ export default function Editor(props: Props) {
     return (
       <FloatButton
         icon={pannelOpen ? <DoubleLeftOutlined /> : <DoubleRightOutlined />}
-        style={{ left: pannelOpen ? 210 : 20, top: 310 }}
+        style={{ width: 30, height: 30, left: pannelOpen ? 210 : 20, top: 310 }}
         onClick={() => setPannelOpen(!pannelOpen)}
       />
     );
