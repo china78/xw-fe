@@ -72,9 +72,9 @@ export default function Editor(props: Props) {
   };
 
   const siderStyle: React.CSSProperties = {
-    // width: `${width}px`,
+    width: `${width}px`,
     padding: 10,
-    flex: '0 0 auto',
+    // flex: '0 0 auto',
   };
 
   const contentStyle: React.CSSProperties = {
