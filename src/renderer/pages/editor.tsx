@@ -3,12 +3,14 @@ import {
   PlayCircleOutlined,
   RobotOutlined,
   SmileOutlined,
+  DoubleLeftOutlined,
+  DoubleRightOutlined,
 } from '@ant-design/icons';
 import { Tree, FloatButton } from 'antd';
 import type { DirectoryTreeProps } from 'antd/es/tree';
 import { useDispatch, useSelector } from 'react-redux';
 import { Directory } from '../../main/util';
-import ResizableSider from '../components/ResizableSider';
+// import ResizableSider from '../components/ResizableSider';
 import EditorMainContent from '../components/EditorMainContent';
 import EditorTabs from '../components/EditorTabs';
 import {
@@ -26,7 +28,8 @@ interface Props {
 
 export default function Editor(props: Props) {
   const { treeData } = props;
-  const [width, setWidth] = useState(200);
+  // const [width, setWidth] = useState(200);
+  const [pannelOpen, setPannelOpen] = useState(true);
   const [selectedFilePath, setSelectedFilePath] = useState<string>('');
   const dispatch = useDispatch();
   const { DirectoryTree } = Tree;
@@ -79,11 +82,11 @@ export default function Editor(props: Props) {
     minHeight: '100vh',
   };
 
-  const siderStyle: React.CSSProperties = {
-    width: `${width}px`,
-    padding: 10,
-    // flex: '0 0 auto',
-  };
+  // const siderStyle: React.CSSProperties = {
+  //   width: `${width}px`,
+  //   padding: 10,
+  //   // flex: '0 0 auto',
+  // };
 
   const contentStyle: React.CSSProperties = {
     flex: '1',
@@ -100,9 +103,25 @@ export default function Editor(props: Props) {
     return extension ?? '';
   }, [selectedFilePath]);
 
+  const doorHandle = useMemo(() => {
+    return (
+      <FloatButton
+        icon={pannelOpen ? <DoubleLeftOutlined /> : <DoubleRightOutlined />}
+        style={{ left: pannelOpen ? 210 : 20, top: 310 }}
+        onClick={() => setPannelOpen(!pannelOpen)}
+      />
+    );
+  }, [pannelOpen]);
+
   return (
     <div style={layoutStyle}>
-      <div style={siderStyle}>
+      <div
+        style={{
+          // width: `${width}px`,
+          padding: 10,
+          display: pannelOpen ? 'block' : 'none',
+        }}
+      >
         {treeData && (
           <DirectoryTree
             defaultExpandAll
@@ -112,31 +131,32 @@ export default function Editor(props: Props) {
           />
         )}
       </div>
+      {doorHandle}
       <div style={contentStyle}>
-        <ResizableSider width={width} setWidth={setWidth}>
-          {tabs.length > 0 && (
-            <div className="headerBox">
-              <EditorTabs />
-              <FloatButton.Group shape="square" style={{ right: 40, top: 90 }}>
-                <FloatButton tooltip="解释当前代码" icon={<RobotOutlined />} />
-                <FloatButton
-                  icon={<PlayCircleOutlined />}
-                  type="primary"
-                  tooltip="评估代码质量"
-                />
-                <FloatButton icon={<SmileOutlined />} tooltip="优化当前代码" />
-              </FloatButton.Group>
-            </div>
-          )}
-          {selectedFileContent && (
-            <div className="monaco-container">
-              <EditorMainContent
-                fileContent={selectedFileContent}
-                fileExtension={fileExtension}
+        {/* <ResizableSider width={width} setWidth={setWidth}> */}
+        {tabs.length > 0 && (
+          <div className="headerBox">
+            <EditorTabs />
+            <FloatButton.Group shape="square" style={{ right: 40, top: 90 }}>
+              <FloatButton tooltip="解释当前代码" icon={<RobotOutlined />} />
+              <FloatButton
+                icon={<PlayCircleOutlined />}
+                type="primary"
+                tooltip="评估代码质量"
               />
-            </div>
-          )}
-        </ResizableSider>
+              <FloatButton icon={<SmileOutlined />} tooltip="优化当前代码" />
+            </FloatButton.Group>
+          </div>
+        )}
+        {selectedFileContent && (
+          <div className="monaco-container">
+            <EditorMainContent
+              fileContent={selectedFileContent}
+              fileExtension={fileExtension}
+            />
+          </div>
+        )}
+        {/* </ResizableSider> */}
       </div>
     </div>
   );
