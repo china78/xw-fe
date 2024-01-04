@@ -72,13 +72,15 @@ export default function Editor(props: Props) {
   };
 
   const siderStyle: React.CSSProperties = {
-    width: `${width}px`,
+    // width: `${width}px`,
     padding: 10,
+    flex: '0 0 auto',
   };
 
   const contentStyle: React.CSSProperties = {
     flex: '1',
-    // padding: '16px',
+    overflowY: 'auto',
+    // padding: '10px',
   };
 
   const fileExtension = useMemo(() => {
@@ -104,12 +106,14 @@ export default function Editor(props: Props) {
       </div>
       <div style={contentStyle}>
         <ResizableSider width={width} setWidth={setWidth}>
-          <EditorTabs />
+          {tabs.length > 0 && <EditorTabs />}
           {selectedFileContent && (
-            <EditorMainContent
-              fileContent={selectedFileContent}
-              fileExtension={fileExtension}
-            />
+            <div className="monaco-container">
+              <EditorMainContent
+                fileContent={selectedFileContent}
+                fileExtension={fileExtension}
+              />
+            </div>
           )}
         </ResizableSider>
       </div>

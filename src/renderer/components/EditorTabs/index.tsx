@@ -42,15 +42,13 @@ export default function EditorTabs() {
   }, [activeKey]);
 
   return (
-    <div>
-      <Tabs
-        hideAdd
-        onChange={onChange}
-        activeKey={activeKey}
-        type="editable-card"
-        onEdit={onEdit}
-        items={tabs}
-      />
-    </div>
+    <Tabs
+      hideAdd
+      onChange={onChange}
+      activeKey={activeKey}
+      type="editable-card"
+      onEdit={onEdit}
+      items={tabs}
+    />
   );
 }
