@@ -4,6 +4,7 @@ import type { DirectoryTreeProps } from 'antd/es/tree';
 import { Directory } from '../../main/util';
 import ResizableSider from '../components/ResizableSider';
 import EditorMainContent from '../components/EditorMainContent';
+import EditorTabs from '../components/EditorTabs';
 
 interface Props {
   treeData: Directory[];
@@ -83,7 +84,7 @@ export default function Editor(props: Props) {
       </div>
       <div style={contentStyle}>
         <ResizableSider width={width} setWidth={setWidth}>
-          <div>tabs区域</div>
+          <EditorTabs />
           {selectedFileContent && (
             <EditorMainContent
               fileContent={selectedFileContent}

@@ -21,9 +21,9 @@ export default function EditorMainCintent(props: Props) {
 
   useEffect(() => {
     // 根据文件扩展名获取对应的语言
-    const mappedLanguage =
-      extensionToLanguageMap[fileExtension] || fileExtension.substring(1);
-
+    // const mappedLanguage =
+    //   extensionToLanguageMap[fileExtension] || fileExtension.substring(1);
+    const mappedLanguage = fileExtension;
     // 如果编辑器实例不存在，则创建
     if (!editorRef.current) {
       const editor = monaco.editor.create(document.getElementById('editor'), {
