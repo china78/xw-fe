@@ -1,68 +1,55 @@
-import React, { useState, useRef } from "react";
-import { Button, Tabs } from 'antd';
+import React, { useEffect } from 'react';
+import { Tabs } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  removeTab,
+  setActiveKey,
+  selectTabs,
+  selectActiveKey,
+} from '../../store/EditorTabs/EditorTabSlice';
 
 type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
 
-const defaultPanes = new Array(2).fill(null).map((_, index) => {
-  const id = String(index + 1);
-  return {
-    label: `Tab ${id}`,
-    children: `Content of Tab Pane ${index + 1}`,
-    key: id,
-  };
-});
-
 export default function EditorTabs() {
-  const [activeKey, setActiveKey] = useState(defaultPanes[0].key);
-  const [items, setItems] = useState(defaultPanes);
-  const newTabIndex = useRef(0);
+  const dispatch = useDispatch();
+  const tabs = useSelector(selectTabs);
+  const activeKey = useSelector(selectActiveKey);
 
   const onChange = (key: string) => {
-    setActiveKey(key);
-  };
-
-  const add = () => {
-    const newActiveKey = `newTab${newTabIndex.current++}`;
-    setItems([
-      ...items,
-      { label: 'New Tab', children: 'New Tab Pane', key: newActiveKey },
-    ]);
-    setActiveKey(newActiveKey);
+    dispatch(setActiveKey(key));
+    // 向主进程请求文件内容
+    window.electron.ipcRenderer.sendMessage('get-file-content', key);
   };
 
   const remove = (targetKey: TargetKey) => {
-    const targetIndex = items.findIndex((pane) => pane.key === targetKey);
-    const newPanes = items.filter((pane) => pane.key !== targetKey);
-    if (newPanes.length && targetKey === activeKey) {
-      const { key } =
-        newPanes[
-          targetIndex === newPanes.length ? targetIndex - 1 : targetIndex
-        ];
-      setActiveKey(key);
-    }
-    setItems(newPanes);
+    dispatch(removeTab({ key: targetKey.toString() }));
+    const newActiveKey = tabs.length > 1 ? tabs[tabs.length - 2].key : '';
+    dispatch(setActiveKey(newActiveKey));
   };
 
   const onEdit = (targetKey: TargetKey, action: 'add' | 'remove') => {
-    if (action === 'add') {
-      add();
-    } else {
+    if (action === 'remove') {
       remove(targetKey);
     }
   };
 
+  useEffect(() => {
+    // 在这里可以处理点击 tab 时的逻辑，例如请求文件内容
+    if (activeKey) {
+      // 在这里发起请求获取文件内容
+      console.log(`Request content for tab with key: ${activeKey}`);
+    }
+  }, [activeKey]);
+
   return (
     <div>
-      <div style={{ marginBottom: 16 }}>
-        <Button onClick={add}>ADD</Button>
-      </div>
       <Tabs
         hideAdd
         onChange={onChange}
         activeKey={activeKey}
         type="editable-card"
         onEdit={onEdit}
-        items={items}
+        items={tabs}
       />
     </div>
   );
