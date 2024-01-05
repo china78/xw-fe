@@ -142,6 +142,11 @@ export default function Editor(props: Props) {
           // width: `${width}px`,
           padding: 10,
           display: pannelOpen ? 'block' : 'none',
+          maxWidth: '20%',
+          maxHeight: '100vh',
+          overflowX: 'scroll',
+          overflowY: 'scroll',
+          whiteSpace: 'nowrap',
         }}
       >
         {treeData && (

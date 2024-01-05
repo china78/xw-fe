@@ -3,6 +3,8 @@ export const extensionToLanguageMap: Record<string, string> = {
   '.js': 'javascript',
   '.jsx': 'javascript',
   '.ejs': 'javascript',
+  '.mjs': 'javascript',
+  '.mts': 'javascript',
   '.ts': 'typescript',
   '.tsx': 'typescript',
   '.html': 'html',
