@@ -3,3 +3,16 @@
   justify-content: space-between;
   align-items: center;
 }
+.ant-drawer-body {
+  position: relative;
+}
+
+.ant-drawer-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 8px; /* 宽度可以根据需要调整 */
+  background-color: #e8e8e8;
+  cursor: ew-resize;
+}

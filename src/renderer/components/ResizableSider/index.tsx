@@ -2,10 +2,10 @@ import Draggable from 'react-draggable';
 import './style.css';
 
 export default function ResizableSider(props: any) {
-  const { width, children, setWidth } = props;
+  const { width, children, setWidth, openDraw } = props;
 
   const handleDrag = (e: any, ui: { deltaX: any }) => {
-    setWidth(width + ui.deltaX);
+    setWidth(width - ui.deltaX);
   };
 
   return (
@@ -14,12 +14,14 @@ export default function ResizableSider(props: any) {
       handle=".handle"
       defaultPosition={{ x: 0, y: 0 }}
       grid={[1, 1]}
-      scale={1.5}
+      scale={1}
       onDrag={handleDrag}
     >
       <div className="handlebox">
         <div className="handle" />
-        <div className="content">{children}</div>
+        <div className="content" style={{ width: openDraw ? width : 0 }}>
+          {children}
+        </div>
       </div>
     </Draggable>
   );

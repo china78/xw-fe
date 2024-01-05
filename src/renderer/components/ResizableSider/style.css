@@ -4,15 +4,14 @@
 
 .content {
   flex-grow: 1; /* 让内容区域占据剩余的空间 */
-  padding: 10px;
 }
 
 .handle {
-  width: 4px; /* 改为更宽的宽度 */
+  width: 6px; /* 改为更宽的宽度 */
   height: 100vh;
-  background-color: #eaeaea;
+  background-color: #e8e8e8;
   cursor: ew-resize;
-  transition: background-color 0.3s; /* 添加过渡效果 */
+  transform: translateX(0)  /* transition: background-color 0.3s; */
 }
 
 .handle:hover {

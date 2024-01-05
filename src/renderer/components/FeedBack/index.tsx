@@ -1,11 +1,11 @@
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Drawer, Button, Tooltip, Space } from 'antd';
-import './style.css';
-import { useMemo, useState } from 'react';
 import {
   VerticalAlignBottomOutlined,
   VerticalLeftOutlined,
-  CloseOutlined
+  CloseOutlined,
 } from '@ant-design/icons';
+import './style.css';
 
 interface Props {
   title: string;
@@ -14,8 +14,10 @@ interface Props {
 }
 export default function FeedBack(props: Props) {
   const { title = 'someTile', openDraw = false, setOpenDraw } = props;
-
   const [isRight, setIsRight] = useState(true);
+  const [drawerWidth, setDrawerWidth] = useState(300);
+  const [dragging, setDragging] = useState(false);
+  const startX = useRef(null);
 
   const onClose = () => {
     setOpenDraw(false);
@@ -54,15 +56,45 @@ export default function FeedBack(props: Props) {
     );
   }, [closeIcon, isRight, title]);
 
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (dragging && startX.current !== null) {
+        const deltaX = e.clientX - startX.current;
+        setDrawerWidth((prevWidth) => Math.max(prevWidth - deltaX, 0));
+        startX.current = e.clientX;
+      }
+    };
+
+    const handleMouseUp = () => {
+      setDragging(false);
+      startX.current = null;
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [dragging]);
+
+  const handleDragStart = (e: any) => {
+    setDragging(true);
+    startX.current = e.clientX;
+  };
+
   return (
     <Drawer
-      size="large"
       title={renderTitle}
       placement={isRight ? 'right' : 'bottom'}
       onClose={onClose}
       open={openDraw}
       closable={false}
+      mask={false}
+      width={drawerWidth}
     >
+      <div className="ant-drawer-handle" onMouseDown={handleDragStart} />
       <p>Some contents...</p>
       <p>Some contents...</p>
       <p>Some contents...</p>

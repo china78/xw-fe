@@ -155,7 +155,6 @@ export default function Editor(props: Props) {
       </div>
       {doorHandle}
       <div style={contentStyle}>
-        {/* <ResizableSider width={width} setWidth={setWidth}> */}
         {tabs.length > 0 && (
           <div className="headerBox">
             <EditorTabs />
@@ -180,7 +179,6 @@ export default function Editor(props: Props) {
             />
           </div>
         )}
-        {/* </ResizableSider> */}
       </div>
       <FeedBack
         title={eventTitle}
