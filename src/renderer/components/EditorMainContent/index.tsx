@@ -1,14 +1,6 @@
 import * as monaco from 'monaco-editor';
 import { useEffect, useRef } from 'react';
-
-// 映射表，将文件扩展名映射到 Monaco Editor 支持的语言名称
-const extensionToLanguageMap: Record<string, string> = {
-  '.js': 'javascript',
-  '.jsx': 'javascript',
-  '.ejs': 'javascript',
-  '.ts': 'typescript',
-  '.tsx': 'typescript',
-};
+import { extensionToLanguageMap } from '../../config/fileMappings';
 
 interface Props {
   fileContent: string;
@@ -21,9 +13,7 @@ export default function EditorMainCintent(props: Props) {
 
   useEffect(() => {
     // 根据文件扩展名获取对应的语言
-    // const mappedLanguage =
-    //   extensionToLanguageMap[fileExtension] || fileExtension.substring(1);
-    const mappedLanguage = fileExtension;
+    const mappedLanguage = extensionToLanguageMap[fileExtension] || 'plaintext';
     // 如果编辑器实例不存在，则创建
     if (!editorRef.current) {
       const editor = monaco.editor.create(document.getElementById('editor'), {
