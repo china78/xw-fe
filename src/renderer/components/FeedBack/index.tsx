@@ -22,9 +22,15 @@ function FeedBack(props: Props) {
   const { title = 'someTile', openDraw = false, setOpenDraw } = props;
   const [isRight, setIsRight] = useState(true);
   const [drawerWidth, setDrawerWidth] = useState(300);
+  const [drawerHeight, setDrawerHeight] = useState<string | number>('100vh');
   const [dragging, setDragging] = useState(false);
-  const startX = useRef(null);
+  const startXY = useRef(null);
 
+  useEffect(() => {
+    if (!isRight) {
+      setDrawerHeight(387);
+    }
+  }, [isRight]);
   const onClose = () => {
     setOpenDraw(false);
   };
@@ -64,18 +70,27 @@ function FeedBack(props: Props) {
 
   const handleMouseMove = useCallback(
     (e: any) => {
-      if (dragging && startX.current !== null) {
-        const deltaX = e.clientX - startX.current;
-        setDrawerWidth((prevWidth) => Math.max(prevWidth - deltaX, 0));
-        startX.current = e.clientX;
+      if (dragging && startXY.current !== null) {
+        if (isRight) {
+          const deltaX = e.clientX - startXY.current;
+          setDrawerWidth((prevWidth) => Math.max(prevWidth - deltaX, 0));
+          startXY.current = e.clientX;
+        } else {
+          const deltaY = e.clientY - startXY.current;
+          setDrawerHeight((prevHeight: number | any) => {
+            const newHeight = Math.max(prevHeight - deltaY, 0);
+            return newHeight;
+          });
+          startXY.current = e.clientY;
+        }
       }
     },
-    [dragging],
+    [dragging, isRight],
   );
 
   const handleMouseUp = useCallback(() => {
     setDragging(false);
-    startX.current = null;
+    startXY.current = null;
   }, []);
 
   useEffect(() => {
@@ -94,10 +109,39 @@ function FeedBack(props: Props) {
     };
   }, [handleMouseMove, handleMouseUp]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleDragStart = (e: any) => {
     setDragging(true);
-    startX.current = e.clientX;
+    if (isRight) {
+      startXY.current = e.clientX;
+    } else {
+      startXY.current = e.clientY;
+    }
   };
+
+  const doorHandle = useMemo(() => {
+    if (isRight) {
+      return (
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+        <div
+          className="ant-drawer-handle-right"
+          onMouseDown={handleDragStart}
+        />
+      );
+    }
+    return (
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+      <div
+        className="ant-drawer-handle-top"
+        onMouseDown={handleDragStart}
+        style={{
+          top: 0,
+          height: '8px',
+          width: '100%',
+        }}
+      />
+    );
+  }, [handleDragStart, isRight]);
 
   return (
     <Drawer
@@ -108,8 +152,9 @@ function FeedBack(props: Props) {
       closable={false}
       mask={false}
       width={drawerWidth}
+      height={drawerHeight}
     >
-      <div className="ant-drawer-handle" onMouseDown={handleDragStart} />
+      {doorHandle}
       <p>Some contents...</p>
       <p>Some contents...</p>
       <p>Some contents...</p>
