@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+} from 'react';
 import { Drawer, Button, Tooltip, Space } from 'antd';
 import {
   VerticalAlignBottomOutlined,
@@ -12,7 +18,7 @@ interface Props {
   openDraw: boolean;
   setOpenDraw: (o: boolean) => void;
 }
-export default function FeedBack(props: Props) {
+function FeedBack(props: Props) {
   const { title = 'someTile', openDraw = false, setOpenDraw } = props;
   const [isRight, setIsRight] = useState(true);
   const [drawerWidth, setDrawerWidth] = useState(300);
@@ -56,28 +62,37 @@ export default function FeedBack(props: Props) {
     );
   }, [closeIcon, isRight, title]);
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback(
+    (e: any) => {
       if (dragging && startX.current !== null) {
         const deltaX = e.clientX - startX.current;
         setDrawerWidth((prevWidth) => Math.max(prevWidth - deltaX, 0));
         startX.current = e.clientX;
       }
+    },
+    [dragging],
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setDragging(false);
+    startX.current = null;
+  }, []);
+
+  useEffect(() => {
+    const container = document;
+
+    const handleMouseMoveDebounced = (e: any) => {
+      requestAnimationFrame(() => handleMouseMove(e));
     };
 
-    const handleMouseUp = () => {
-      setDragging(false);
-      startX.current = null;
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    container.addEventListener('mousemove', handleMouseMoveDebounced);
+    container.addEventListener('mouseup', handleMouseUp);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      container.removeEventListener('mousemove', handleMouseMoveDebounced);
+      container.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [dragging]);
+  }, [handleMouseMove, handleMouseUp]);
 
   const handleDragStart = (e: any) => {
     setDragging(true);
@@ -101,3 +116,5 @@ export default function FeedBack(props: Props) {
     </Drawer>
   );
 }
+
+export default React.memo(FeedBack);
