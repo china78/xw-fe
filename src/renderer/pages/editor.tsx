@@ -139,17 +139,22 @@ export default function Editor(props: Props) {
       <div
         style={{
           // width: `${width}px`,
-          paddingRight: 10,
+          minWidth: 200,
           display: pannelOpen ? 'block' : 'none',
           width: 'auto',
           maxHeight: '100vh',
           overflow: 'scroll',
           whiteSpace: 'nowrap',
+          backgroundColor: 'rgba(0, 0, 0, 0.01)',
         }}
       >
         {treeData && (
           <DirectoryTree
-            // defaultExpandAll
+            rootStyle={{
+              paddingRight: 10,
+              backgroundColor: 'transparent',
+              paddingTop: 10,
+            }}
             onSelect={onSelect}
             onExpand={onExpand}
             treeData={treeData}

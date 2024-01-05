@@ -8,6 +8,7 @@ import {
   selectActiveKey,
   setFileContent,
 } from '../../store/EditorTabs/EditorTabSlice';
+import './style.css';
 
 type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
 

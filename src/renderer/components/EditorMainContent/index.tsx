@@ -42,5 +42,5 @@ export default function EditorMainCintent(props: Props) {
     };
   }, [fileContent, fileExtension]);
 
-  return <div id="editor" style={{ height: '90vh' }} />;
+  return <div id="editor" style={{ height: '100vh' }} />;
 }
