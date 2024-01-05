@@ -134,27 +134,26 @@ export default function Editor(props: Props) {
     title && setEventTitle(title);
     setOpenDraw(true);
   };
-
   return (
     <div style={layoutStyle}>
       <div
         style={{
           // width: `${width}px`,
-          padding: 10,
+          paddingRight: 10,
           display: pannelOpen ? 'block' : 'none',
-          maxWidth: '20%',
+          width: 'auto',
           maxHeight: '100vh',
-          overflowX: 'scroll',
-          overflowY: 'scroll',
+          overflow: 'scroll',
           whiteSpace: 'nowrap',
         }}
       >
         {treeData && (
           <DirectoryTree
-            defaultExpandAll
+            // defaultExpandAll
             onSelect={onSelect}
             onExpand={onExpand}
             treeData={treeData}
+            defaultExpandedKeys={[treeData[0].key]}
           />
         )}
       </div>

@@ -43,8 +43,15 @@ ipcMain.on('open-folder-dialog', async () => {
     if (!result.canceled && result.filePaths.length > 0) {
       const selectedDirectory = result.filePaths[0];
       const projectStructure = await readDirectoryAsync(selectedDirectory);
-      console.log(projectStructure);
-      mainWindow?.webContents.send('project-structure', projectStructure);
+      const rootFileName = path.basename(selectedDirectory);
+      const rootStructure = [
+        {
+          key: selectedDirectory,
+          title: rootFileName,
+          children: projectStructure,
+        },
+      ];
+      mainWindow?.webContents.send('project-structure', rootStructure);
     }
   } catch (error) {
     console.error(error);

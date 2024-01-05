@@ -25,7 +25,6 @@ export async function readDirectoryAsync(
 ): Promise<Directory[]> {
   try {
     const items = await readdir(dirPath, { withFileTypes: true });
-
     const results: Directory[] = await Promise.all(
       items.map(async (item) => {
         const itemPath = path.join(dirPath, item.name);
