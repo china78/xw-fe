@@ -138,6 +138,7 @@ function FeedBack(props: Props) {
           top: 0,
           height: '8px',
           width: '100%',
+          backgroundColor: '#0000000a',
         }}
       />
     );
