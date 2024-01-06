@@ -49,14 +49,17 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
     });
   });
 
-  ipcMain.on('get-gpt-response', async (event, inputText) => {
-    try {
-      const gptResponse = await fetchGPTResponse(inputText);
-      event.sender.send('gpt-response', null, { gptResponse });
-    } catch (error) {
-      event.sender.send('gpt-response', null, { error: error.message });
-    }
-  });
+  ipcMain.on(
+    'get-gpt-response',
+    async (event, request: { messages: string; model: string }) => {
+      try {
+        const gptResponse = await fetchGPTResponse(request);
+        event.sender.send('gpt-response', null, { gptResponse });
+      } catch (error) {
+        event.sender.send('gpt-response', null, { error: error.message });
+      }
+    },
+  );
 };
 
 export default setupIPCHandlers;
