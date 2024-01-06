@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './axios';
 
 const GPT_API_BASE_URL = 'https://example.com/gpt'; // 替换成实际的 GPT API 地址
 

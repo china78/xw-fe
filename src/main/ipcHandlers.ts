@@ -57,7 +57,6 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
       event.sender.send('gpt-response', null, { error: error.message });
     }
   });
-
 };
 
 export default setupIPCHandlers;
