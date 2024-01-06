@@ -22,6 +22,7 @@ import {
   setFileName,
 } from '../store/EditorTabs/EditorTabSlice';
 import FeedBack from '../components/FeedBack';
+import './style.css';
 
 interface Props {
   treeData: Directory[];
@@ -108,6 +109,9 @@ export default function Editor(props: Props) {
   const contentStyle: React.CSSProperties = {
     flex: '1',
     overflowY: 'auto',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    // borderRight: '2px solid #191919',
     // padding: '10px',
   };
 
@@ -140,20 +144,24 @@ export default function Editor(props: Props) {
         style={{
           // width: `${width}px`,
           minWidth: 200,
+          maxWidth: 300,
           display: pannelOpen ? 'block' : 'none',
           width: 'auto',
           maxHeight: '100vh',
           overflow: 'scroll',
           whiteSpace: 'nowrap',
-          backgroundColor: 'rgba(0, 0, 0, 0.01)',
+          backgroundColor: '#343541',
+          boxShadow: '2px 0 5px rgba(0, 0, 0, 0.2)',
         }}
       >
         {treeData && (
           <DirectoryTree
             rootStyle={{
               paddingRight: 10,
+              paddingLeft: 10,
               backgroundColor: 'transparent',
               paddingTop: 10,
+              color: '#d1d5db',
             }}
             onSelect={onSelect}
             onExpand={onExpand}

@@ -9,12 +9,12 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import fs from 'fs';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import { readDirectoryAsync, resolveHtmlPath } from './util';
+import { resolveHtmlPath } from './util';
+import setupIPCHandlers from './ipcHandlers';
 
 class AppUpdater {
   constructor() {
@@ -25,50 +25,6 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
-
-/**
- * 打开文件夹
- */
-ipcMain.on('open-folder-dialog', async () => {
-  try {
-    const result = await dialog.showOpenDialog(mainWindow!, {
-      properties: ['openDirectory'],
-    });
-    if (!result.canceled && result.filePaths.length > 0) {
-      const selectedDirectory = result.filePaths[0];
-      const projectStructure = await readDirectoryAsync(selectedDirectory);
-      const rootFileName = path.basename(selectedDirectory);
-      const rootStructure = [
-        {
-          key: selectedDirectory,
-          title: rootFileName,
-          children: projectStructure,
-        },
-      ];
-      mainWindow?.webContents.send('project-structure', rootStructure);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-});
-
-// 读取指定的文件路径
-ipcMain.on('get-file-content', (event, filePath) => {
-  // 异步读取文件
-  fs.readFile(filePath, 'utf-8', (err, content) => {
-    if (err) {
-      event.sender.send('file-content', null, { err: err.message });
-    } else {
-      event.sender.send('file-content', null, { content });
-    }
-  });
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -119,6 +75,8 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
+
+  setupIPCHandlers(mainWindow);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
