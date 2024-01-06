@@ -2,6 +2,7 @@ import { ipcMain, dialog, BrowserWindow } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { readDirectoryAsync } from './util';
+import { fetchGPTResponse } from './api';
 
 const setupIPCHandlers = (mainWindow: BrowserWindow) => {
   ipcMain.on('ipc-example', async (event, arg) => {
@@ -47,6 +48,16 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
       }
     });
   });
+
+  ipcMain.on('get-gpt-response', async (event, inputText) => {
+    try {
+      const gptResponse = await fetchGPTResponse(inputText);
+      event.sender.send('gpt-response', null, { gptResponse });
+    } catch (error) {
+      event.sender.send('gpt-response', null, { error: error.message });
+    }
+  });
+
 };
 
 export default setupIPCHandlers;
