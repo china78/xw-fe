@@ -1,0 +1,31 @@
+.space-y-2 {
+  margin-bottom: 0.5rem;
+}
+
+.max-w-xs {
+  max-width: 20rem;
+}
+
+.md\\:max-w-md {
+  max-width: 28rem;
+}
+
+.bg-gray-200 {
+  background-color: #edf2f7;
+}
+
+.text-gray-700 {
+  color: #4a5568;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.rounded-lg {
+  border-radius: 0.375rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}

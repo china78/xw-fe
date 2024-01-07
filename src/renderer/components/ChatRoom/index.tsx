@@ -1,5 +1,6 @@
 import TalkArea from '../TalkArea';
 import WriteArea from '../WriteArea';
+import './styles.css';
 
 export default function ChatRoom() {
   return (

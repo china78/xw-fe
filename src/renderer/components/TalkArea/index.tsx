@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import { selectChatHistory } from '../../store/chat/chatSlice';
 import { ChatMessage, CreateChatCompletionRequest } from '../../types';
+import './styles.css';
 
 export default function TalkArea() {
   const chatHistory: CreateChatCompletionRequest =

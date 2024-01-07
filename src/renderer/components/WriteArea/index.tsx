@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { CreateChatCompletionRequest } from '../../types';
 import { UserMessage } from '../../types/UserMessage.type';
 import { addUserMessage } from '../../store/chat/chatSlice';
+import './styles.css';
 
 export default function WriteArea() {
   const [text, setText] = useState('');
