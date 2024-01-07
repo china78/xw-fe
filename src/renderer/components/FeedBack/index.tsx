@@ -12,6 +12,7 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 import './style.css';
+import ChatRoom from '../ChatRoom';
 
 interface Props {
   title: string;
@@ -21,7 +22,7 @@ interface Props {
 function FeedBack(props: Props) {
   const { title = 'someTile', openDraw = false, setOpenDraw } = props;
   const [isRight, setIsRight] = useState(true);
-  const [drawerWidth, setDrawerWidth] = useState(300);
+  const [drawerWidth, setDrawerWidth] = useState(500);
   const [drawerHeight, setDrawerHeight] = useState<string | number>('100vh');
   const [dragging, setDragging] = useState(false);
   const startXY = useRef(null);
@@ -155,9 +156,7 @@ function FeedBack(props: Props) {
       height={drawerHeight}
     >
       {doorHandle}
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
+      <ChatRoom />
     </Drawer>
   );
 }
