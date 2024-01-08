@@ -1,79 +1,23 @@
-.space-y-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
-}
-
-.flex {
+.talkbox {
   display: flex;
-}
-
-.flex-col {
   flex-direction: column;
 }
 
 .hidden {
   display: none;
 }
-
-.space-y-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+.contentBox {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
-.overflow-auto {
-  overflow: auto;
-}
-
-.flex-col.space-y-2.p-4.overflow-auto {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding-top: 1rem;
-  padding-right: 1rem;
-  padding-bottom: 1rem;
-  padding-left: 1rem;
-  overflow: auto;
-}
-
-.flex.items-end {
-  display: flex;
-  align-items: flex-end;
-}
-
-.justify-start {
-  justify-content: flex-start;
-}
-
-.justify-end {
-  justify-content: flex-end;
-}
-
-.max-w-xs {
-  max-width: 20rem;
-}
-
-.md\\:max-w-md {
-  max-width: 28rem;
-}
-
-.bg-gray-200 {
-  /* background-color: #edf2f7; */
-}
-
-.text-gray-700 {
+.itemBox {
   color: #d9d9d9;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 10px;
 }
-
-.p-2 {
-  padding: 0.5rem;
-}
-
-.rounded-lg {
-  border-radius: 0.375rem;
-}
-
-.text-sm {
-  font-size: 0.875rem;
+.message {
+  margin-left: 10px;
 }

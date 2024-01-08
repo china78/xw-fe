@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { RedditOutlined, UserOutlined } from '@ant-design/icons';
 import { selectChatHistory } from '../../store/chat/chatSlice';
 import { ChatMessage, CreateChatCompletionRequest } from '../../types';
 import './styles.css';
@@ -9,17 +10,17 @@ export default function TalkArea() {
   console.log('chatHistory: ', chatHistory);
 
   return (
-    <div className="flex flex-col space-y-2 p-4 overflow-auto">
+    <div className="talkbox">
       {chatHistory.messages.map((message: ChatMessage) => {
         return (
-          <div
-            key={message.id}
-            className={`flex items-end ${
-              message.role === 'assistant' ? 'justify-start' : 'justify-end'
-            }`}
-          >
-            <div className="max-w-xs md:max-w-md bg-gray-200 text-gray-700 p-2 rounded-lg">
-              <p className="text-sm">{message.content}</p>
+          <div key={message.id} className="contentBox">
+            <div className="itemBox">
+              {message.role === 'assistant' ? (
+                <RedditOutlined style={{ fontSize: 20, color: 'cadetblue' }} />
+              ) : (
+                <UserOutlined style={{ fontSize: 20, color: 'chocolate' }} />
+              )}
+              <div className="message">{message.content}</div>
             </div>
           </div>
         );
