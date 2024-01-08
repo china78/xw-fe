@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 const GPT_API_BASE_URL = 'https://api.openai.com';
-const OPENAI_API_KEY = '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';
+const OPENAI_API_KEY = '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';
 
 const instance = axios.create({
   baseURL: GPT_API_BASE_URL,
-  timeout: 10000,
+  timeout: 50000,
   proxy: {
     protocol: 'http',
     host: '127.0.0.1',
@@ -16,7 +16,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     const token = OPENAI_API_KEY;
-    if (token) {
+    if (OPENAI_API_KEY) {
       config.headers.Authorization = `Bearer ${token}`;
       config.headers['Content-Type'] = 'application/json';
       return config;
@@ -29,7 +29,6 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
-    console.log('instance.interceptors.response: ', response)
     // 对响应数据做点什么
     return response;
   },

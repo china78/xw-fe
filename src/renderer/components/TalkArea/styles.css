@@ -7,8 +7,13 @@
   display: none;
 }
 .contentBox {
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: 1rem; /* 调整字体大小 */
+  line-height: 1.5rem; /* 调整行高 */
+}
+
+.message {
+  margin-left: 10px;
+  letter-spacing: 0.5px; /* 调整字间距 */
 }
 
 .itemBox {
@@ -17,7 +22,4 @@
   justify-content: flex-start;
   align-items: flex-start;
   margin-bottom: 10px;
-}
-.message {
-  margin-left: 10px;
 }

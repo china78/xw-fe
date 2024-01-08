@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
+import { useDispatch } from 'react-redux';
 import { Drawer, Button, Tooltip, Space } from 'antd';
 import {
   VerticalAlignBottomOutlined,
@@ -13,6 +14,7 @@ import {
 } from '@ant-design/icons';
 import './style.css';
 import ChatRoom from '../ChatRoom';
+import { addUserMessage } from '../../store/chat/chatSlice';
 
 interface Props {
   title: string;
@@ -26,6 +28,23 @@ function FeedBack(props: Props) {
   const [drawerHeight, setDrawerHeight] = useState<string | number>('100vh');
   const [dragging, setDragging] = useState(false);
   const startXY = useRef(null);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('gpt-response', (_event, content: any) => {
+      const { err, data } = content || {};
+      console.log('---- content ---', content);
+      if (err) {
+        console.error(err);
+      } else {
+        const msg = data?.choices[0]?.message;
+        if (msg) {
+          console.log('Received GPT response:', msg);
+          dispatch(addUserMessage(msg));
+        }
+      }
+    });
+  }, [dispatch]);
 
   useEffect(() => {
     if (!isRight) {

@@ -16,9 +16,13 @@ export const fetchGPTResponse = async (
       model,
       // ...其他参数
     });
-    console.log('response: ', response);
-    // 返回从 GPT API 获取的响应
-    return response.data.result;
+
+    console.log('-------response: -------', response.data.choices[0].message);
+
+    if (response.status === 200) {
+      // 返回从 GPT API 获取的响应
+      return response.data;
+    }
   } catch (error) {
     console.error('Error fetching GPT response:', error.message);
     throw error;

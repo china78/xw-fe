@@ -55,8 +55,9 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
     async (event, request: { messages: UserMessage; model: string }) => {
       console.log('渲染进程传递来的参数', request);
       try {
-        const gptResponse = await fetchGPTResponse(request);
-        event.sender.send('gpt-response', null, { gptResponse });
+        const data = await fetchGPTResponse(request);
+        console.log('---- data 主进程 -----', data);
+        event.sender.send('gpt-response', null, { data });
       } catch (error) {
         event.sender.send('gpt-response', null, { error: error.message });
       }

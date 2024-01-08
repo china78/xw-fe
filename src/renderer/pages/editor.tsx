@@ -160,6 +160,7 @@ export default function Editor(props: Props) {
     };
     window.electron.ipcRenderer.sendMessage('get-gpt-response', requestParams);
   };
+
   return (
     <div style={layoutStyle}>
       <div
