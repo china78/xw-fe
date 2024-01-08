@@ -77,7 +77,7 @@ export default function WriteArea() {
     <div className="writeBox">
       {/* 文件上传按钮 */}
       <Upload>
-        <Button icon={<UploadOutlined />} />
+        <Button className="btnc" icon={<UploadOutlined />} />
       </Upload>
       {/* 文本输入框 */}
       <textarea
@@ -92,9 +92,7 @@ export default function WriteArea() {
       />
 
       {/* 发送按钮 */}
-      <Button onClick={handleSend}>
-        <ArrowUpOutlined />
-      </Button>
+      <Button className="btnc" icon={<ArrowUpOutlined />} onClick={handleSend} />
     </div>
   );
 }

@@ -21,11 +21,16 @@
 .focus,
 .focus::placeholder,
 .focus ~ .placeholder {
-  color: white;
+  color: #e5e5e5;
 }
 
 .input {
-  border: 1px solid #ccc;
+  border: 1px solid #5c5b5b;
   padding: 10px;
   border-radius: 5px;
+}
+
+.btnc {
+  background-color: #5c5b5b;
+  color: #fff;
 }
