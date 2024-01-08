@@ -2,6 +2,9 @@
 /* eslint-disable react/button-has-type */
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { Button, Upload } from 'antd';
+import type { UploadProps } from 'antd';
+import { UploadOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { CreateChatCompletionRequest } from '../../types';
 import { UserMessage } from '../../types/UserMessage.type';
 import { addUserMessage } from '../../store/chat/chatSlice';
@@ -23,17 +26,15 @@ export default function WriteArea() {
 
     // 如果有ref引用并且实际的高度大于1行的高度，更新高度
     const target = textareaRef.current;
+
     if (target) {
-      target.style.height = 'auto'; // 重置高度以获得正确的滚动高度
+      target!.style.height = 'auto'; // 重置高度以获得正确的滚动高度
       const { scrollHeight } = target;
       target.style.height = scrollHeight > 200 ? '200px' : `${scrollHeight}px`;
     }
-  };
-
-  const data: CreateChatCompletionRequest = {
-    messages: [{ role: 'user', content: text }],
-    model: 'gpt-3.5-turbo',
-    // stream: true,
+    if (event.target.value === '') {
+      target!.style.height = 'auto'; // 重置高度以获得正确的滚动高度
+    }
   };
 
   const handleSend = () => {
@@ -73,17 +74,11 @@ export default function WriteArea() {
   };
 
   return (
-    <div className="flex items-center bg-white p-2 rounded-lg shadow w-full">
+    <div className="writeBox">
       {/* 文件上传按钮 */}
-      <label
-        htmlFor="file-upload"
-        className="cursor-pointer p-2 hover:bg-gray-200 rounded-full transition duration-150 ease-in-out"
-      >
-        {/* <PaperClipIcon className="h-6 w-6 text-gray-500" /> */}
-        ⬅️
-      </label>
-      <input id="file-upload" type="file" className="hidden" />
-
+      <Upload>
+        <Button icon={<UploadOutlined />} />
+      </Upload>
       {/* 文本输入框 */}
       <textarea
         ref={textareaRef}
@@ -92,18 +87,14 @@ export default function WriteArea() {
         value={text}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        className="flex-1 bg-transparent px-4 py-2 mx-2 resize-none overflow-hidden focus:outline-none"
-        style={{ maxHeight: '200px' }}
+        className="textarea focus input"
+        style={{ maxHeight: 200 }}
       />
 
       {/* 发送按钮 */}
-      <button
-        onClick={handleSend}
-        className="p-2 hover:bg-blue-600 rounded-full transition duration-150 ease-in-out"
-      >
-        {/* <ArrowRightIcon className="h-6 w-6 text-blue-500 hover:text-white" /> */}
-        ➡️
-      </button>
+      <Button onClick={handleSend}>
+        <ArrowUpOutlined />
+      </Button>
     </div>
   );
 }
