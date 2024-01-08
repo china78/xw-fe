@@ -33,10 +33,13 @@ export const chatSlice = createSlice({
       // 追加用户消息 response['choices'][0]['message']['content']
       state.chatHistory.messages.push(action.payload);
     },
+    resetMessages: (state) => {
+      state.chatHistory.messages = [];
+    },
   },
 });
 
-export const { addUserMessage } = chatSlice.actions;
+export const { addUserMessage, resetMessages } = chatSlice.actions;
 
 export const selectChatHistory = (state: { chat: ChatState }) =>
   state.chat.chatHistory;

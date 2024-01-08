@@ -23,7 +23,7 @@ import {
 } from '../store/EditorTabs/EditorTabSlice';
 import FeedBack from '../components/FeedBack';
 import './style.css';
-import { selectModel } from '../store/chat/chatSlice';
+import { resetMessages, selectModel } from '../store/chat/chatSlice';
 
 interface Props {
   treeData: Directory[];
@@ -147,18 +147,24 @@ export default function Editor(props: Props) {
 
   const handleFloatBtn = (btn: FloatButtonInfo) => {
     const { tooltip, description } = btn;
-    // eslint-disable-next-line no-unused-expressions
-    tooltip && setEventTitle(tooltip);
+    // 如果是非展开事件
+    if (tooltip) {
+      dispatch(resetMessages());
+      setEventTitle(tooltip);
+      // 触发主进程 以文件内容为参数，请求 gpt接口，渲染反馈到 drawer 面板
+      // 文件内容 - selectedFileContent 当前描述 - description
+      const requestParams = {
+        model,
+        messages: [
+          { role: 'user', content: `${selectedFileContent}\n${description}` },
+        ],
+      };
+      window.electron.ipcRenderer.sendMessage(
+        'get-gpt-response',
+        requestParams,
+      );
+    }
     setOpenDraw(true);
-    // 触发主进程 以文件内容为参数，请求 gpt接口，渲染反馈到 drawer 面板
-    // 文件内容 - selectedFileContent 当前描述 - description
-    const requestParams = {
-      model,
-      messages: [
-        { role: 'user', content: `${selectedFileContent}\n${description}` },
-      ],
-    };
-    window.electron.ipcRenderer.sendMessage('get-gpt-response', requestParams);
   };
 
   return (
