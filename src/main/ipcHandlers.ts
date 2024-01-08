@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { readDirectoryAsync } from './util';
 import { fetchGPTResponse } from './api';
+import { UserMessage } from '../renderer/types/UserMessage.type';
 
 const setupIPCHandlers = (mainWindow: BrowserWindow) => {
   ipcMain.on('ipc-example', async (event, arg) => {
@@ -51,7 +52,8 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
 
   ipcMain.on(
     'get-gpt-response',
-    async (event, request: { messages: string; model: string }) => {
+    async (event, request: { messages: UserMessage; model: string }) => {
+      console.log('渲染进程传递来的参数', request);
       try {
         const gptResponse = await fetchGPTResponse(request);
         event.sender.send('gpt-response', null, { gptResponse });

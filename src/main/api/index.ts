@@ -1,7 +1,8 @@
+import { UserMessage } from '../../renderer/types/UserMessage.type';
 import axios from './axios';
 
 interface RequestParams {
-  messages: string;
+  messages: UserMessage;
   model: string;
 }
 // eslint-disable-next-line import/prefer-default-export
@@ -15,7 +16,7 @@ export const fetchGPTResponse = async (
       model,
       // ...其他参数
     });
-
+    console.log('response: ', response);
     // 返回从 GPT API 获取的响应
     return response.data.result;
   } catch (error) {

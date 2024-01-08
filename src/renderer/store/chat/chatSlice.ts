@@ -41,4 +41,7 @@ export const { addUserMessage } = chatSlice.actions;
 export const selectChatHistory = (state: { chat: ChatState }) =>
   state.chat.chatHistory;
 
+export const selectModel = (state: { chat: ChatState }) =>
+  state.chat.chatHistory.model;
+
 export default chatSlice.reducer;

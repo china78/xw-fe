@@ -23,14 +23,20 @@ import {
 } from '../store/EditorTabs/EditorTabSlice';
 import FeedBack from '../components/FeedBack';
 import './style.css';
+import { selectModel } from '../store/chat/chatSlice';
 
 interface Props {
   treeData: Directory[];
 }
+interface FloatButtonInfo {
+  tooltip: string | null;
+  icon: any;
+  description?: string;
+  type?: string;
+}
 
 export default function Editor(props: Props) {
   const { treeData } = props;
-  // const [width, setWidth] = useState(200);
   const [pannelOpen, setPannelOpen] = useState(true);
   const [selectedFilePath, setSelectedFilePath] = useState<string>('');
   const [eventTitle, setEventTitle] = useState('');
@@ -39,20 +45,25 @@ export default function Editor(props: Props) {
   const { DirectoryTree } = Tree;
   const tabs = useSelector(selectTabs);
   const selectedFileContent = useSelector(selectFileContent);
+  const model = useSelector(selectModel);
 
-  const floatButtonInfo = [
+  const floatButtonInfo: FloatButtonInfo[] = [
     {
       tooltip: '解释当前代码',
       icon: <RobotOutlined />,
+      description: '请解释当前代码的内容',
     },
     {
       tooltip: '评估代码质量',
       icon: <PlayCircleOutlined />,
       type: 'primary',
+      description: '请评估当前代码的质量，是否有不合规或者耗性能，及冗余的写法',
     },
     {
       tooltip: '优化当前代码',
       icon: <SmileOutlined />,
+      description:
+        '针对当前代码的不足之处，给出优化方案，本着高效、优雅、不冗余、可读性等',
     },
     {
       tooltip: null,
@@ -134,15 +145,25 @@ export default function Editor(props: Props) {
     );
   }, [pannelOpen]);
 
-  const handleFloatBtn = (title: string) => {
-    title && setEventTitle(title);
+  const handleFloatBtn = (btn: FloatButtonInfo) => {
+    const { tooltip, description } = btn;
+    // eslint-disable-next-line no-unused-expressions
+    tooltip && setEventTitle(tooltip);
     setOpenDraw(true);
+    // 触发主进程 以文件内容为参数，请求 gpt接口，渲染反馈到 drawer 面板
+    // 文件内容 - selectedFileContent 当前描述 - description
+    const requestParams = {
+      model,
+      messages: [
+        { role: 'user', content: `${selectedFileContent}\n${description}` },
+      ],
+    };
+    window.electron.ipcRenderer.sendMessage('get-gpt-response', requestParams);
   };
   return (
     <div style={layoutStyle}>
       <div
         style={{
-          // width: `${width}px`,
           minWidth: 200,
           maxWidth: 300,
           display: pannelOpen ? 'block' : 'none',
@@ -182,7 +203,7 @@ export default function Editor(props: Props) {
                   tooltip={button.tooltip ?? '展开面板'}
                   icon={button.icon}
                   type={button.type}
-                  onClick={() => handleFloatBtn(button.tooltip)}
+                  onClick={() => handleFloatBtn(button)}
                 />
               ))}
             </FloatButton.Group>

@@ -11,9 +11,9 @@ export default function TalkArea() {
 
   return (
     <div className="talkbox">
-      {chatHistory.messages.map((message: ChatMessage) => {
+      {chatHistory.messages.map((message: ChatMessage, index) => {
         return (
-          <div key={message.id} className="contentBox">
+          <div key={index} className="contentBox">
             <div className="itemBox">
               {message.role === 'assistant' ? (
                 <RedditOutlined style={{ fontSize: 20, color: 'cadetblue' }} />

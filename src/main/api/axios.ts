@@ -15,12 +15,12 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    // 添加认证头部信息
-    const token = OPENAI_API_KEY; // 假设 api-key 存储在环境变量中
+    const token = OPENAI_API_KEY;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      config.headers['Content-Type'] = 'application/json';
+      return config;
     }
-    return config;
   },
   (error) => {
     return Promise.reject(error);
@@ -29,6 +29,7 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
+    console.log('instance.interceptors.response: ', response)
     // 对响应数据做点什么
     return response;
   },

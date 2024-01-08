@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, Upload } from 'antd';
-import type { UploadProps } from 'antd';
 import { UploadOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { CreateChatCompletionRequest } from '../../types';
 import { UserMessage } from '../../types/UserMessage.type';
@@ -92,7 +91,11 @@ export default function WriteArea() {
       />
 
       {/* 发送按钮 */}
-      <Button className="btnc" icon={<ArrowUpOutlined />} onClick={handleSend} />
+      <Button
+        className="btnc"
+        icon={<ArrowUpOutlined />}
+        onClick={handleSend}
+      />
     </div>
   );
 }
