@@ -1,9 +1,12 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron';
 import path from 'path';
 import fs from 'fs';
+// import OpenAI from 'openai';
 import { readDirectoryAsync } from './util';
 import { fetchGPTResponse } from './api';
 import { UserMessage } from '../renderer/types/UserMessage.type';
+
+// const openai = new OpenAI();
 
 const setupIPCHandlers = (mainWindow: BrowserWindow) => {
   ipcMain.on('ipc-example', async (event, arg) => {
@@ -58,6 +61,10 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
         const data = await fetchGPTResponse(request);
         console.log('---- data 主进程 -----', data);
         event.sender.send('gpt-response', null, { data });
+        // api 的方式
+        // const completion = await openai.chat.completions.create(request);
+        // const data = completion.choices[0].message;
+        // event.sender.send('gpt-response', null, { data });
       } catch (error) {
         event.sender.send('gpt-response', null, { error: error.message });
       }

@@ -6,9 +6,13 @@ import { Button, Upload } from 'antd';
 import { UploadOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { CreateChatCompletionRequest } from '../../types';
 import { UserMessage } from '../../types/UserMessage.type';
-import { addUserMessage, selectChatHistory } from '../../store/chat/chatSlice';
-import './styles.css';
+import {
+  addUserMessage,
+  selectChatHistory,
+  selectModel,
+} from '../../store/chat/chatSlice';
 import { store } from '../../store';
+import './styles.css';
 
 export default function WriteArea() {
   const [text, setText] = useState('');
@@ -16,6 +20,7 @@ export default function WriteArea() {
   const dispatch = useDispatch();
   const chatHistory: CreateChatCompletionRequest =
     useSelector(selectChatHistory);
+  const model = useSelector(selectModel);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -52,7 +57,10 @@ export default function WriteArea() {
       // 更新 Redux 状态以包含用户消息
       dispatch(addUserMessage(userMessage));
 
-      const allChatHistory = store.getState().chat.chatHistory.messages;
+      const allChatHistory = {
+        model,
+        messages: store.getState().chat.chatHistory.messages,
+      };
       console.log('----- updatedChatHistory ----', allChatHistory);
 
       window.electron.ipcRenderer.sendMessage(

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RedditOutlined, UserOutlined, RedoOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
@@ -7,27 +6,18 @@ import { ChatMessage, CreateChatCompletionRequest } from '../../types';
 import './styles.css';
 
 export default function TalkArea() {
-  const [mouseEnt, setMouseEnt] = useState(false);
   const chatHistory: CreateChatCompletionRequest =
     useSelector(selectChatHistory);
 
   const reloadGptRes = () => {
-    window.electron.ipcRenderer.sendMessage(
-      'get-gpt-response',
-      chatHistory.messages,
-    );
+    window.electron.ipcRenderer.sendMessage('get-gpt-response', chatHistory);
   };
 
   return (
     <div className="talkbox">
       {chatHistory.messages.map((message: ChatMessage, index) => {
         return (
-          <div
-            key={index}
-            className="contentBox"
-            onMouseEnter={() => setMouseEnt(true)}
-            onMouseLeave={() => setMouseEnt(false)}
-          >
+          <div key={index} className="contentBox">
             <div className="itemBox">
               {message.role === 'assistant' ? (
                 <RedditOutlined style={{ fontSize: 20, color: 'cadetblue' }} />
