@@ -18,17 +18,6 @@ export default function TalkArea() {
     );
   };
 
-  const onMouseEnt = () => {
-    if (mouseEnt) {
-      return;
-    }
-    setMouseEnt(true);
-  };
-
-  const onMouseOut = () => {
-    setMouseEnt(false);
-  };
-
   return (
     <div className="talkbox">
       {chatHistory.messages.map((message: ChatMessage, index) => {
@@ -48,12 +37,10 @@ export default function TalkArea() {
               <div className="message">{message.content}</div>
             </div>
             {/* 细节操作：重发、复制当前 mouseEnt ? 'visible' : 'hidden' */}
-            <div
-              className="operates"
-              style={{ visibility: mouseEnt ? 'visible' : 'hidden' }}
-            >
+            <div className="operates">
               <Tooltip title="重新发送">
                 <Button
+                  color="#404040"
                   size="small"
                   icon={<RedoOutlined />}
                   type="link"
