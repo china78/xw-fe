@@ -36,10 +36,24 @@ export const chatSlice = createSlice({
     resetMessages: (state) => {
       state.chatHistory.messages = [];
     },
+    updateLastMessageContent: (state, action) => {
+      const lastMessage =
+        state.chatHistory.messages[state.chatHistory.messages.length - 1];
+      if (lastMessage) {
+        lastMessage.content += action.payload;
+      } else {
+        // 如果 messages 为空，创建一条新的消息
+        state.chatHistory.messages.push({
+          role: 'assistant', // 或者 'user'，具体根据场景而定
+          content: action.payload,
+        });
+      }
+    },
   },
 });
 
-export const { addUserMessage, resetMessages } = chatSlice.actions;
+export const { addUserMessage, resetMessages, updateLastMessageContent } =
+  chatSlice.actions;
 
 export const selectChatHistory = (state: { chat: ChatState }) =>
   state.chat.chatHistory;

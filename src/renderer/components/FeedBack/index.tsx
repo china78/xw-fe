@@ -14,7 +14,10 @@ import {
 } from '@ant-design/icons';
 import './style.css';
 import ChatRoom from '../ChatRoom';
-import { addUserMessage } from '../../store/chat/chatSlice';
+import {
+  addUserMessage,
+  updateLastMessageContent,
+} from '../../store/chat/chatSlice';
 
 interface Props {
   title: string;
@@ -32,19 +35,18 @@ function FeedBack(props: Props) {
 
   useEffect(() => {
     const handleGptResponse = (_event: any, content: any) => {
-      const { err, data } = content || {};
-      console.log('---- content ---', content);
+      const { err, chunk } = content || {};
+      // 直接存值
+      // dispatch(addUserMessage(msg));
+      console.log('--content--', content);
       if (err) {
         console.error(err);
       } else {
-        const msg = data?.choices[0]?.message;
-        if (msg) {
-          console.log('Received GPT response:', msg);
-          dispatch(addUserMessage(msg));
-        }
+        console.log('---- chunk ---', chunk);
+        dispatch(updateLastMessageContent(chunk));
       }
     };
-    window.electron.ipcRenderer.on('gpt-response', handleGptResponse);
+    window.electron.ipcRenderer.on('gpt-response-chunk', handleGptResponse);
   }, [dispatch]);
 
   useEffect(() => {
