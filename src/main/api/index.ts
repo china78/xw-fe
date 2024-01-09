@@ -14,15 +14,13 @@ export const fetchGPTResponse = async (
     const response = await axios.post(`/v1/chat/completions`, {
       messages,
       model,
+      stream: true,
       // ...其他参数
     });
 
-    console.log('-------response: -------', response.data.choices[0].message);
+    console.log('-------response: -------', response.data);
 
-    if (response.status === 200) {
-      // 返回从 GPT API 获取的响应
-      return response.data;
-    }
+    return response.data;
   } catch (error) {
     console.error('Error fetching GPT response:', error.message);
     throw error;

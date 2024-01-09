@@ -36,17 +36,18 @@ function FeedBack(props: Props) {
   useEffect(() => {
     const handleGptResponse = (_event: any, content: any) => {
       const { err, chunk } = content || {};
-      // 直接存值
-      // dispatch(addUserMessage(msg));
-      console.log('--content--', content);
       if (err) {
+        // eslint-disable-next-line no-console
         console.error(err);
       } else {
         console.log('---- chunk ---', chunk);
-        dispatch(updateLastMessageContent(chunk));
+        if (chunk) {
+          dispatch(updateLastMessageContent(chunk));
+        }
+        // dispatch(dispatch(addUserMessage(chunk)));
       }
     };
-    window.electron.ipcRenderer.on('gpt-response-chunk', handleGptResponse);
+    window.electron.ipcRenderer.on('gpt-response', handleGptResponse);
   }, [dispatch]);
 
   useEffect(() => {

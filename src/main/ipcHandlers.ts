@@ -59,29 +59,26 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
       console.log('渲染进程传递来的参数', request);
       try {
         const gptResponse = await fetchGPTResponse(request);
-        // 直接返回
-        // event.sender.send('gpt-response', null, { data: gptResponse });
-
-        const { content } = gptResponse.choices[0].message;
-        // 将字符串转换为字符数组
-        const charArray = content.split('');
-        // 定义分块大小
-        const chunkSize = 50;
-        // 创建可读流，将数据分块传送
-        const readable = Readable.from(charArray, { objectMode: true });
-        const sendDataChunk = () => {
-          const chunk = readable.read(chunkSize);
-          if (chunk) {
-            console.log('--chunk--: ', chunk);
-            event.sender.send('gpt-response-chunk', null, { chunk });
-            setImmediate(sendDataChunk); // 使用 setImmediate 以确保异步执行
-          } else {
-            event.sender.send('gpt-response-end');
+        // console.log('stream data -', gptResponse.toString());
+        const lines = gptResponse
+          .toString()
+          .split('\n\n')
+          .filter((line) => line.trim() !== '');
+        // console.log('lines: ', lines);
+        lines.forEach((line) => {
+          const message = line.replace('data: ', '');
+          if (message === '[DONE]') {
+            return;
           }
-        };
-
-        // 开始分块传送
-        setImmediate(sendDataChunk);
+          try {
+            const parsed = JSON.parse(message);
+            const chunk = parsed.choices[0].delta.content;
+            console.log('chunk -', chunk);
+            event.sender.send('gpt-response', null, { chunk });
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        });
       } catch (error) {
         event.sender.send('gpt-response', null, { error: error.message });
       }
