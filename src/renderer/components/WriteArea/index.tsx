@@ -1,18 +1,21 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/button-has-type */
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Upload } from 'antd';
 import { UploadOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { CreateChatCompletionRequest } from '../../types';
 import { UserMessage } from '../../types/UserMessage.type';
-import { addUserMessage } from '../../store/chat/chatSlice';
+import { addUserMessage, selectChatHistory } from '../../store/chat/chatSlice';
 import './styles.css';
+import { store } from '../../store';
 
 export default function WriteArea() {
   const [text, setText] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dispatch = useDispatch();
+  const chatHistory: CreateChatCompletionRequest =
+    useSelector(selectChatHistory);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -37,6 +40,7 @@ export default function WriteArea() {
   };
 
   const handleSend = () => {
+    console.log('----- chatHistory 1 ----', chatHistory);
     if (text.trim()) {
       // 创建用户消息对象
       const userMessage: UserMessage = {
@@ -44,16 +48,17 @@ export default function WriteArea() {
         content: text,
       };
 
+      console.log('----- userMessage ----: ', userMessage);
       // 更新 Redux 状态以包含用户消息
       dispatch(addUserMessage(userMessage));
 
-      // 准备发送到 OpenAI 的请求数据
-      const requestData: CreateChatCompletionRequest = {
-        model: 'gpt-3.5-turbo',
-        messages: [userMessage],
-      };
+      const allChatHistory = store.getState().chat.chatHistory.messages;
+      console.log('----- updatedChatHistory ----', allChatHistory);
 
-      // dispatch(createChatCompletionAsync(requestData));
+      window.electron.ipcRenderer.sendMessage(
+        'get-gpt-response',
+        allChatHistory,
+      );
       // 给主进程发消息
       // 发送消息的逻辑
 

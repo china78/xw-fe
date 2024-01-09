@@ -31,7 +31,7 @@ function FeedBack(props: Props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    window.electron.ipcRenderer.on('gpt-response', (_event, content: any) => {
+    const handleGptResponse = (_event: any, content: any) => {
       const { err, data } = content || {};
       console.log('---- content ---', content);
       if (err) {
@@ -43,7 +43,8 @@ function FeedBack(props: Props) {
           dispatch(addUserMessage(msg));
         }
       }
-    });
+    };
+    window.electron.ipcRenderer.on('gpt-response', handleGptResponse);
   }, [dispatch]);
 
   useEffect(() => {

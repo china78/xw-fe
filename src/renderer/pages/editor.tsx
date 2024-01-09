@@ -147,6 +147,7 @@ export default function Editor(props: Props) {
 
   const handleFloatBtn = (btn: FloatButtonInfo) => {
     const { tooltip, description } = btn;
+    console.log('触发');
     // 如果是非展开事件
     if (tooltip) {
       dispatch(resetMessages());
@@ -159,6 +160,7 @@ export default function Editor(props: Props) {
           { role: 'user', content: `${selectedFileContent}\n${description}` },
         ],
       };
+      console.log('发了3遍？');
       window.electron.ipcRenderer.sendMessage(
         'get-gpt-response',
         requestParams,

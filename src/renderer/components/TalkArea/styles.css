@@ -23,3 +23,10 @@
   align-items: flex-start;
   margin-bottom: 10px;
 }
+.operates {
+  display: flex;
+  justify-content: flex-start;
+  /* align-items: center;
+  background-color: rgba(0, 0, 0, 0.05); */
+  padding-left: 25px;
+}

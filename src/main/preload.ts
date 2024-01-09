@@ -4,7 +4,14 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels = string;
 
-const electronHandler = {
+interface IPCRendererExtension {
+  sendMessage(channel: Channels, ...args: unknown[]): void;
+  on(channel: Channels, func: (...args: unknown[]) => void): () => void;
+  once(channel: Channels, func: (...args: unknown[]) => void): void;
+  // removeListener(channel: Channels, func: (...args: unknown[]) => void): void;
+}
+
+const electronHandler: { ipcRenderer: IPCRendererExtension } = {
   ipcRenderer: {
     sendMessage(channel: Channels, ...args: unknown[]) {
       ipcRenderer.send(channel, ...args);
@@ -21,6 +28,9 @@ const electronHandler = {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
+    // removeListener(channel: Channels, func: (...args: unknown[]) => void) {
+    //   ipcRenderer.removeListener(channel, func);
+    // },
   },
 };
 
