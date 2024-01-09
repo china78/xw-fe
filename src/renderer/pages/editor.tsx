@@ -41,6 +41,7 @@ export default function Editor(props: Props) {
   const [selectedFilePath, setSelectedFilePath] = useState<string>('');
   const [eventTitle, setEventTitle] = useState('');
   const [openDraw, setOpenDraw] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState('');
   const dispatch = useDispatch();
   const { DirectoryTree } = Tree;
   const tabs = useSelector(selectTabs);
@@ -131,6 +132,10 @@ export default function Editor(props: Props) {
     const extension = selectedFilePath.substring(
       selectedFilePath.lastIndexOf('.'),
     );
+    const filename = selectedFilePath.substring(
+      selectedFilePath.lastIndexOf('/'),
+    );
+    setSelectedFileName(filename.slice(1));
     // 去掉文件扩展名前面的点 (.)
     return extension ?? '';
   }, [selectedFilePath]);
@@ -157,7 +162,10 @@ export default function Editor(props: Props) {
       const requestParams = {
         model,
         messages: [
-          { role: 'user', content: `${selectedFileContent}\n${description}` },
+          {
+            role: 'user',
+            content: `${selectedFileName}\n${selectedFileContent}\n${description}`,
+          },
         ],
       };
       console.log('发了3遍？');
@@ -228,7 +236,7 @@ export default function Editor(props: Props) {
         )}
       </div>
       <FeedBack
-        title={eventTitle}
+        title={`${selectedFileName} - ${eventTitle}`}
         openDraw={openDraw}
         setOpenDraw={setOpenDraw}
       />
