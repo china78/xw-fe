@@ -8,22 +8,13 @@ import {
 } from '@ant-design/icons';
 import { Tree, FloatButton } from 'antd';
 import type { DirectoryTreeProps } from 'antd/es/tree';
-import { useDispatch, useSelector } from 'react-redux';
 import { Directory } from '../../main/util';
-// import ResizableSider from '../components/ResizableSider';
 import EditorMainContent from '../components/EditorMainContent';
 import EditorTabs from '../components/EditorTabs';
-import {
-  addTab,
-  selectFileContent,
-  selectTabs,
-  setActiveKey,
-  setFileContent,
-  setFileName,
-} from '../store/EditorTabs/EditorTabSlice';
 import FeedBack from '../components/FeedBack';
 import './style.css';
-import { resetMessages, selectModel } from '../store/chat/chatSlice';
+import { useTreeStore } from '../store/tree';
+import { useChatStore } from '../store/chat';
 
 interface Props {
   treeData: Directory[];
@@ -42,11 +33,14 @@ export default function Editor(props: Props) {
   const [eventTitle, setEventTitle] = useState('');
   const [openDraw, setOpenDraw] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState('');
-  const dispatch = useDispatch();
   const { DirectoryTree } = Tree;
-  const tabs = useSelector(selectTabs);
-  const selectedFileContent = useSelector(selectFileContent);
-  const model = useSelector(selectModel);
+  const treeStore = useTreeStore.getState();
+  const chatStore = useChatStore.getState();
+  const [chatHistory] = useChatStore((state) => [state.chatHistory]);
+  const [tabs, fileContent] = useTreeStore((state) => [
+    state.tabs,
+    state.fileContent,
+  ]);
 
   const floatButtonInfo: FloatButtonInfo[] = [
     {
@@ -81,23 +75,22 @@ export default function Editor(props: Props) {
         console.error(err);
       } else {
         console.log(content);
-        dispatch(setFileContent(content));
+        treeStore.setFileContent(content);
       }
     });
-  }, [dispatch]);
+  }, [treeStore]);
 
   // 每次点要去tabs[]检查是否已经有label(文件名)存在的文件了，有的话，不添加，把key设置为activeKey
   const triggerTab = (filePath: string, filename: string) => {
     const existFile = tabs.find((tab) => tab.label === filename);
     if (!existFile) {
-      dispatch(addTab({ key: filePath, label: filename }));
+      treeStore.addTab({ key: filePath, label: filename });
     }
-    dispatch(setFileName(filename));
-    dispatch(setActiveKey(filePath));
+    treeStore.setFileName(filename);
+    treeStore.setActiveKey(filePath);
   };
 
   const onSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
-    // console.log('Trigger Select', keys, info);
     const filePath = keys[0] as string;
     const { isLeaf, title: filename } = info.node as any; // 是文件才去要内容
     setSelectedFilePath(filePath);
@@ -152,23 +145,21 @@ export default function Editor(props: Props) {
 
   const handleFloatBtn = (btn: FloatButtonInfo) => {
     const { tooltip, description } = btn;
-    console.log('触发');
     // 如果是非展开事件
     if (tooltip) {
-      dispatch(resetMessages());
+      chatStore.resetMessages();
       setEventTitle(tooltip);
       // 触发主进程 以文件内容为参数，请求 gpt接口，渲染反馈到 drawer 面板
       // 文件内容 - selectedFileContent 当前描述 - description
       const requestParams = {
-        model,
+        model: chatHistory.model,
         messages: [
           {
             role: 'user',
-            content: `${selectedFileName}\n${selectedFileContent}\n${description}`,
+            content: `${selectedFileName}\n${fileContent}\n${description}`,
           },
         ],
       };
-      console.log('发了3遍？');
       window.electron.ipcRenderer.sendMessage(
         'get-gpt-response',
         requestParams,
@@ -226,10 +217,10 @@ export default function Editor(props: Props) {
             </FloatButton.Group>
           </div>
         )}
-        {selectedFileContent && (
+        {fileContent && (
           <div className="monaco-container">
             <EditorMainContent
-              fileContent={selectedFileContent}
+              fileContent={fileContent}
               fileExtension={fileExtension}
             />
           </div>

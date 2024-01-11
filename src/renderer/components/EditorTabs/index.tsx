@@ -1,35 +1,31 @@
 import React, { useEffect } from 'react';
 import { Tabs } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  removeTab,
-  setActiveKey,
-  selectTabs,
-  selectActiveKey,
-  setFileContent,
-} from '../../store/EditorTabs/EditorTabSlice';
 import './style.css';
+import { useTreeStore } from '../../store/tree';
 
 type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
 
 export default function EditorTabs() {
-  const dispatch = useDispatch();
-  const tabs = useSelector(selectTabs);
-  const activeKey = useSelector(selectActiveKey);
+  const treeStore = useTreeStore.getState();
+  const [tabs, activeKey] = useTreeStore((state) => [
+    state.tabs,
+    state.activeKey,
+  ]);
 
   const onChange = (key: string) => {
-    dispatch(setActiveKey(key));
+    treeStore.setActiveKey(key);
+
     // 向主进程请求文件内容
     window.electron.ipcRenderer.sendMessage('get-file-content', key);
   };
 
   const remove = (targetKey: TargetKey) => {
-    dispatch(removeTab({ key: targetKey.toString() }));
+    treeStore.removeTab(targetKey.toString());
     const haveTab = tabs.length > 1;
     const newActiveKey = haveTab ? tabs[tabs.length - 2].key : '';
-    dispatch(setActiveKey(newActiveKey));
+    treeStore.setActiveKey(newActiveKey);
     if (!haveTab) {
-      dispatch(setFileContent(''));
+      treeStore.setFileContent('');
     }
   };
 

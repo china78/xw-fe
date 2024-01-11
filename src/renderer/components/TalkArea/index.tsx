@@ -1,13 +1,11 @@
-import { useSelector } from 'react-redux';
 import { RedditOutlined, UserOutlined, RedoOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
-import { selectChatHistory } from '../../store/chat/chatSlice';
-import { ChatMessage, CreateChatCompletionRequest } from '../../types';
+import { ChatMessage } from '../../types';
 import './styles.css';
+import { useChatStore } from '../../store/chat';
 
 export default function TalkArea() {
-  const chatHistory: CreateChatCompletionRequest =
-    useSelector(selectChatHistory);
+  const [chatHistory] = useChatStore((state) => [state.chatHistory]);
 
   const reloadGptRes = () => {
     window.electron.ipcRenderer.sendMessage('get-gpt-response', chatHistory);

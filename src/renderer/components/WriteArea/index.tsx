@@ -1,26 +1,18 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/button-has-type */
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
 import { Button, Upload } from 'antd';
 import { UploadOutlined, ArrowUpOutlined } from '@ant-design/icons';
-import { CreateChatCompletionRequest } from '../../types';
 import { UserMessage } from '../../types/UserMessage.type';
-import {
-  addUserMessage,
-  selectChatHistory,
-  selectModel,
-} from '../../store/chat/chatSlice';
-import { store } from '../../store';
 import './styles.css';
+import { useChatStore } from '../../store/chat';
 
 export default function WriteArea() {
   const [text, setText] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const dispatch = useDispatch();
-  const chatHistory: CreateChatCompletionRequest =
-    useSelector(selectChatHistory);
-  const model = useSelector(selectModel);
+
+  const chatStore = useChatStore.getState();
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -45,21 +37,22 @@ export default function WriteArea() {
   };
 
   const handleSend = () => {
-    console.log('----- chatHistory 1 ----', chatHistory);
+    console.log('----- chatHistory 1 ----', chatStore.chatHistory);
     if (text.trim()) {
       // 创建用户消息对象
       const userMessage: UserMessage = {
         role: 'user',
         content: text,
       };
-
       console.log('----- userMessage ----: ', userMessage);
-      // 更新 Redux 状态以包含用户消息
-      dispatch(addUserMessage(userMessage));
+
+      if (userMessage) {
+        chatStore.addUserMessage(userMessage);
+      }
 
       const allChatHistory = {
-        model,
-        messages: store.getState().chat.chatHistory.messages,
+        model: chatStore.chatHistory.model,
+        messages: chatStore.chatHistory.messages,
       };
       console.log('----- updatedChatHistory ----', allChatHistory);
 
