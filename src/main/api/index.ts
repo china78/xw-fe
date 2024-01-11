@@ -14,7 +14,7 @@ export const fetchGPTResponse = async (
     const response = await axios.post(`/v1/chat/completions`, {
       messages,
       model,
-      stream: true,
+      // stream: true,
       // ...其他参数
     });
 

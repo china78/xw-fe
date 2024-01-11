@@ -10,17 +10,7 @@ export interface ChatState {
 const initialState: ChatState = {
   chatHistory: {
     model: 'gpt-3.5-turbo',
-    messages: [
-      // {
-      //   role: 'assistant',
-      //   content:
-      //     '聊天模型将消息列表作为输入，并返回模型生成的消息作为输出。尽管聊天格式旨在使多轮对话变得容易，但它对于没有任何对话的单轮任务也同样有用。',
-      // },
-      // {
-      //   role: 'user',
-      //   content: '吃了吗您',
-      // },
-    ],
+    messages: [],
   }, // 聊天会话的历史记录
   error: null,
 };

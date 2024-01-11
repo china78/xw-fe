@@ -12,7 +12,7 @@ interface InitialState {
   fileContent: string;
 }
 
-const DEFAULT_PROJECT_TREE: InitialState = {
+const DEFAULT_TREE: InitialState = {
   tabs: [],
   activeKey: '',
   fileName: '',
@@ -20,8 +20,8 @@ const DEFAULT_PROJECT_TREE: InitialState = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const useChatStore = createPersistStore(
-  DEFAULT_PROJECT_TREE,
+export const useTreeStore = createPersistStore(
+  DEFAULT_TREE,
   (set, get) => ({
     // 点文件树，上部出现对应的 tab
     addTab(tab: Tabs) {
@@ -57,6 +57,6 @@ export const useChatStore = createPersistStore(
     },
   }),
   {
-    name: 'projectTree',
+    name: 'tree',
   },
 );
