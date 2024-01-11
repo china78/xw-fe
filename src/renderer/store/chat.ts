@@ -7,7 +7,7 @@ export interface ChatState {
   error: string | null;
 }
 
-const DEFAULT_CHAT_TREE = {
+const DEFAULT_CHAT_TREE: ChatState = {
   chatHistory: {
     model: 'gpt-3.5-turbo',
     messages: [],
