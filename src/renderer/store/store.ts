@@ -1,38 +1,21 @@
-import { create } from 'zustand';
-import { combine, persist } from 'zustand/middleware';
-
-type SecondParam<T> = T extends (
-  _f: infer _F,
-  _s: infer S,
-  ...args: infer _U
-) => any
-  ? S
-  : never;
-
-type SetStoreState<T> = (
-  partial: T | Partial<T> | ((state: T) => T | Partial<T>),
-  replace?: boolean | undefined,
-) => void;
+import { create, StateCreator } from 'zustand';
+import { combine, persist, PersistOptions } from 'zustand/middleware';
 
 // eslint-disable-next-line import/prefer-default-export
-export function createPersistStore<T extends object, M>(
+export function createPersistStore<T extends object, U extends object>(
   state: T,
-  methods: (set: SetStoreState<T>, get: () => T) => M,
-  persistOptions: SecondParam<typeof persist<T & M>>,
+  methods: StateCreator<T, [], [], U>,
+  persistOptions: PersistOptions<T, U>,
 ) {
-  return create(
+  return create<T & U>()(
     persist(
       combine(
         {
           ...state,
         },
-        (set, get) => {
-          return {
-            ...methods(set, get as any),
-          } as M;
-        },
-      ),
-      persistOptions as any,
-    ),
+        methods,
+      ) as any,
+      persistOptions,
+    ) as any,
   );
 }

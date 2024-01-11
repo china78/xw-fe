@@ -20,9 +20,18 @@ const DEFAULT_TREE: InitialState = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const useTreeStore = createPersistStore(
+export const useTreeStore = createPersistStore<
+  InitialState,
+  {
+    addTab: (tab: Tabs) => void;
+    removeTab: (key: string) => void;
+    setActiveKey: (key: string) => void;
+    setFileName: (name: string) => void;
+    setFileContent: (content: string) => void;
+  }
+>(
   DEFAULT_TREE,
-  (set, get) => ({
+  (set) => ({
     // 点文件树，上部出现对应的 tab
     addTab(tab: Tabs) {
       set((state) => ({
