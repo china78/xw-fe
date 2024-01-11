@@ -50,11 +50,15 @@ export default function WriteArea() {
         chatStore.addUserMessage(userMessage);
       }
 
-      console.log(
-        '----- 注意！！！ 这里没有取到 追问 最新的数据 ！！！ ----',
-        chatHistory,
+      const requestParams = {
+        messages: [...chatHistory.messages, userMessage],
+        model: chatHistory.model,
+      };
+      console.log('----- 注意！！！----', requestParams);
+      window.electron.ipcRenderer.sendMessage(
+        'get-gpt-response',
+        requestParams,
       );
-      window.electron.ipcRenderer.sendMessage('get-gpt-response', chatHistory);
       // 给主进程发消息
       // 发送消息的逻辑
 
