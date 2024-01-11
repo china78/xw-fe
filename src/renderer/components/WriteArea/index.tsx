@@ -13,6 +13,7 @@ export default function WriteArea() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const chatStore = useChatStore.getState();
+  const [chatHistory] = useChatStore((state) => [state.chatHistory]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -37,7 +38,6 @@ export default function WriteArea() {
   };
 
   const handleSend = () => {
-    console.log('----- chatHistory 1 ----', chatStore.chatHistory);
     if (text.trim()) {
       // 创建用户消息对象
       const userMessage: UserMessage = {
@@ -50,16 +50,11 @@ export default function WriteArea() {
         chatStore.addUserMessage(userMessage);
       }
 
-      const allChatHistory = {
-        model: chatStore.chatHistory.model,
-        messages: chatStore.chatHistory.messages,
-      };
-      console.log('----- updatedChatHistory ----', allChatHistory);
-
-      window.electron.ipcRenderer.sendMessage(
-        'get-gpt-response',
-        allChatHistory,
+      console.log(
+        '----- 注意！！！ 这里没有取到 追问 最新的数据 ！！！ ----',
+        chatHistory,
       );
+      window.electron.ipcRenderer.sendMessage('get-gpt-response', chatHistory);
       // 给主进程发消息
       // 发送消息的逻辑
 
