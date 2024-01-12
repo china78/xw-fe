@@ -47,6 +47,15 @@ export interface ToolDescription {
   };
 }
 
+export interface LLMConfig {
+  model: string;
+  temperature?: number;
+  top_p?: number;
+  stream?: boolean;
+  presence_penalty?: number;
+  frequency_penalty?: number;
+}
+
 // 定义请求体的结构
 export interface CreateChatCompletionRequest {
   model: string; // 使用的模型ID
