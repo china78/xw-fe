@@ -39,28 +39,29 @@ export default function WriteArea() {
 
   const handleSend = () => {
     if (text.trim()) {
+      // 发消息就发消息，纯粹一点，别整那些乱逻辑
+      // 整合数据结构的事不在这层做，在仓库里用单独的方法做
       // 创建用户消息对象
-      const userMessage: UserMessage = {
-        role: 'user',
-        content: text,
-      };
-      console.log('----- userMessage ----: ', userMessage);
+      // const userMessage: UserMessage = {
+      //   role: 'user',
+      //   content: text,
+      // };
+      console.log('----- userMessage ----: ', text);
 
-      if (userMessage) {
-        chatStore.addUserMessage(userMessage);
-      }
+      // if (userMessage) {
+      //   chatStore.addUserMessage(userMessage);
+      // }
 
-      const requestParams = {
-        messages: [...chatHistory.messages, userMessage],
-        model: chatHistory.model,
-      };
-      console.log('----- 注意！！！----', requestParams);
-      window.electron.ipcRenderer.sendMessage(
-        'get-gpt-response',
-        requestParams,
-      );
-      // 给主进程发消息
-      // 发送消息的逻辑
+      // const requestParams = {
+      //   messages: [...chatHistory.messages, userMessage],
+      //   model: chatHistory.model,
+      // };
+      // 以往这里是调主进程，现在走仓库的方法
+      // window.electron.ipcRenderer.sendMessage(
+      //   'get-gpt-response',
+      //   requestParams,
+      // );
+      chatStore.onUserInput(text);
 
       setText(''); // 清空消息
       // 重置高度为单行输入的高度

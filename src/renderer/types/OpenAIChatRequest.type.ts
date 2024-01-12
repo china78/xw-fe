@@ -1,16 +1,33 @@
-import { AssistantMessage } from './AssistantMessage.type';
-import { FunctionMessage } from './FunctionMessage.type';
-import { SystemMessage } from './SystemMessage.type';
-import { ToolMessage } from './ToolMessage.type';
-import { UserMessage } from './UserMessage.type';
+// import { AssistantMessage } from './AssistantMessage.type';
+// import { FunctionMessage } from './FunctionMessage.type';
+// import { SystemMessage } from './SystemMessage.type';
+// import { ToolMessage } from './ToolMessage.type';
+// import { UserMessage } from './UserMessage.type';
 
 // 联合类型，包含所有可能的消息类型
-export type ChatMessage =
-  | SystemMessage
-  | UserMessage
-  | AssistantMessage
-  | ToolMessage
-  | FunctionMessage;
+// export type ChatMessage =
+//   | SystemMessage
+//   | UserMessage
+//   | AssistantMessage
+//   | ToolMessage
+//   | FunctionMessage;
+
+export const ROLES = ['system', 'user', 'assistant'] as const;
+
+export type MessageRole = (typeof ROLES)[number];
+
+export interface RequestMessage {
+  role: MessageRole;
+  content: string;
+}
+
+export type ChatMessage = RequestMessage & {
+  date: string;
+  streaming?: boolean;
+  isError?: boolean;
+  id: string;
+  model?: string;
+};
 
 // JSON Schema 描述接口
 export interface JSONSchema {

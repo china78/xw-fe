@@ -151,19 +151,22 @@ export default function Editor(props: Props) {
       setEventTitle(tooltip);
       // 触发主进程 以文件内容为参数，请求 gpt接口，渲染反馈到 drawer 面板
       // 文件内容 - selectedFileContent 当前描述 - description
-      const requestParams = {
-        model: chatHistory.model,
-        messages: [
-          {
-            role: 'user',
-            content: `${selectedFileName}\n${fileContent}\n${description}`,
-          },
-        ],
-      };
-      window.electron.ipcRenderer.sendMessage(
-        'get-gpt-response',
-        requestParams,
-      );
+      // const requestParams = {
+      //   model: chatHistory.model,
+      //   messages: [
+      //     {
+      //       role: 'user',
+      //       content: `${selectedFileName}\n${fileContent}\n${description}`,
+      //     },
+      //   ],
+      // };
+      // window.electron.ipcRenderer.sendMessage(
+      //   'get-gpt-response',
+      //   requestParams,
+      // );
+      // 走仓库
+      const evtDes = `${selectedFileName}\n${fileContent}\n${description}`;
+      chatStore.onUserInput(evtDes);
     }
     setOpenDraw(true);
   };
