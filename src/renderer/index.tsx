@@ -11,3 +11,7 @@ window.electron.ipcRenderer.once('ipc-example', (arg) => {
   console.log(arg);
 });
 window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
+
+window.electron.ipcRenderer.once('express-info', (args: any) => {
+  console.log('server-port: ', args);
+});

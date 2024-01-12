@@ -107,7 +107,7 @@ const createWindow = async () => {
 
   mainWindow.webContents.once('did-finish-load', () => {
     useServer((_app, _server, port) => {
-      mainWindow?.webContents.send('express-info', { port });
+      mainWindow?.webContents.send('express-info', port);
     });
   });
 
