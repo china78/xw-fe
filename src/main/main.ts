@@ -15,6 +15,7 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import setupIPCHandlers from './ipcHandlers';
+import { useServer } from './api/server';
 
 class AppUpdater {
   constructor() {
@@ -104,6 +105,12 @@ const createWindow = async () => {
     return { action: 'deny' };
   });
 
+  mainWindow.webContents.once('did-finish-load', () => {
+    useServer((_app, _server, port) => {
+      mainWindow?.webContents.send('express-info', { port });
+    });
+  });
+
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -119,6 +126,12 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('will-quit', () => {
+  useServer((_app, server) => {
+    server.close();
+  });
 });
 
 app
