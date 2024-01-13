@@ -1,4 +1,4 @@
-// eslint-disable-next-line max-classes-per-file
+// eslint-disable-next-line max-classes-per-file, import/no-cycle
 import { ChatGPTApi } from './platforms/openai';
 import { LLMConfig, MessageRole } from '../types';
 
@@ -37,6 +37,7 @@ export class ClientApi {
 }
 
 const OPENAI_API_KEY = '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';
+
 export function getHeaders() {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

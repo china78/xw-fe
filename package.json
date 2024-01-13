@@ -96,6 +96,7 @@
     }
   },
   "dependencies": {
+    "@fortaine/fetch-event-source": "^3.0.6",
     "@monaco-editor/react": "^4.6.0",
     "@reduxjs/toolkit": "^2.0.1",
     "antd": "^5.12.6",

@@ -5,7 +5,7 @@ const app = express();
 const port = 3000;
 let server: Server;
 
-app.get('/api/v1/chat/completions', (req, res) => {
+app.get('/api/openai/v1/chat/completions', (req, res) => {
   res.send('IM GPT!');
 });
 

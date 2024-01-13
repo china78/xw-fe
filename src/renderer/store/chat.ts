@@ -141,11 +141,11 @@ export const useChatStore = createPersistStore(
             get().onNewMessage(botMessage);
           },
           onError(err) {
-
+            console.log(err);
           },
           onController(controller) {
-
-          }
+            console.log(controller);
+          },
         });
       },
     };
