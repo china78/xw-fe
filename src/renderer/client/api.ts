@@ -1,4 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
+import { ChatGPTApi } from './platforms/openai';
 import { LLMConfig, MessageRole } from '../types';
 
 export enum ModelProvider {

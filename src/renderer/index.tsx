@@ -13,5 +13,6 @@ window.electron.ipcRenderer.once('ipc-example', (arg) => {
 window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
 
 window.electron.ipcRenderer.once('express-info', (args: any) => {
+  // eslint-disable-next-line no-console
   console.log('server-port: ', args);
 });
