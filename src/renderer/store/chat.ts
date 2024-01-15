@@ -71,23 +71,28 @@ export const useChatStore = createPersistStore(
         set((state) => {
           const updatedMessages = updater(state.chatHistory.messages);
           return {
-            ...state.chatHistory,
-            messages: updatedMessages,
+            chatHistory: {
+              ...state.chatHistory,
+              messages: updatedMessages,
+            },
           };
         });
       },
       updateStat(message: ChatMessage) {
         set((state) => {
-          console.log('-----state------', state.chatHistory.stat);
-          const newCharCount =
-            state.chatHistory.stat.charCount + message.content.length;
-          return {
-            ...state.chatHistory,
-            stat: {
-              ...state.chatHistory.stat,
-              charCount: newCharCount,
-            },
-          };
+          if (state.chatHistory.stat) {
+            console.log('-----state------', state.chatHistory.stat);
+            const newCharCount =
+              state.chatHistory.stat.charCount + message.content.length;
+            return {
+              ...state.chatHistory,
+              stat: {
+                ...state.chatHistory.stat,
+                charCount: newCharCount,
+              },
+            };
+          }
+          return state;
         });
       },
       onNewMessage(message: ChatMessage) {

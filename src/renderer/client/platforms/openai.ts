@@ -42,6 +42,7 @@ export class ChatGPTApi implements LLMApi {
 
     const shouldStream = !!options.config.stream;
     const controller = new AbortController();
+
     options.onController?.(controller);
 
     try {
@@ -63,8 +64,13 @@ export class ChatGPTApi implements LLMApi {
         let remainText = '';
         let finished = false;
 
+
         // eslint-disable-next-line no-inner-declarations
         function animateResponseText() {
+          console.log(
+            '----------controller.signal: ---------',
+            controller.signal.aborted,
+          );
           if (finished || controller.signal.aborted) {
             responseText += remainText;
             console.log('[Response Animation] finished');
@@ -76,8 +82,8 @@ export class ChatGPTApi implements LLMApi {
             const fetchText = remainText.slice(0, fetchCount);
             responseText += fetchText;
             remainText = remainText.slice(fetchCount);
-            // console.log('-------- responseText: -------', responseText)
-            // console.log('-------- fetchText: -------', fetchText)
+            console.log('-------- responseText: -------', responseText)
+            console.log('-------- fetchText: -------', fetchText)
             options.onUpdate?.(responseText, fetchText);
           }
 
@@ -101,6 +107,7 @@ export class ChatGPTApi implements LLMApi {
           ...chatPayload,
           // eslint-disable-next-line consistent-return
           async onopen(res) {
+            console.log('------------ Connection opened: --------', res);
             clearTimeout(requestTimeoutId);
             const contentType = res.headers.get('content-type');
             console.log(
@@ -144,7 +151,7 @@ export class ChatGPTApi implements LLMApi {
           },
           // eslint-disable-next-line consistent-return
           onmessage(msg) {
-            console.log('---------msg----------: ', msg)
+            console.log('---------msg----------: ', msg);
             if (msg.data === '[DONE]' || finished) {
               return finish();
             }
