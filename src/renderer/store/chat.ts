@@ -78,6 +78,7 @@ export const useChatStore = createPersistStore(
       },
       updateStat(message: ChatMessage) {
         set((state) => {
+          console.log('-----state------', state.chatHistory.stat);
           const newCharCount =
             state.chatHistory.stat.charCount + message.content.length;
           return {
@@ -122,6 +123,7 @@ export const useChatStore = createPersistStore(
           messages: recentMessages,
           config: { model: get().chatHistory.model, stream: true }, // 这里暂时先不加 其他 modelConfig
           onUpdate(message) {
+            console.log(' ----- store.onUpdate.message -----: ', message);
             botMessage.streaming = true;
             if (message) {
               botMessage.content = message;

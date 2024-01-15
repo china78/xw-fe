@@ -144,6 +144,7 @@ export class ChatGPTApi implements LLMApi {
           },
           // eslint-disable-next-line consistent-return
           onmessage(msg) {
+            console.log('---------msg----------: ', msg)
             if (msg.data === '[DONE]' || finished) {
               return finish();
             }
@@ -168,6 +169,7 @@ export class ChatGPTApi implements LLMApi {
             finish();
           },
           onerror(e) {
+            console.log('------- fetchEventSource.error ----- : ', e)
             options.onError?.(e);
             throw e;
           },
