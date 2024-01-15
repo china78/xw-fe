@@ -8,8 +8,8 @@ import { prettyObject } from '../../utils/format';
 
 export const REQUEST_TIMEOUT_MS = 60000;
 
-const BASE_URL = '/api/openai';
-const CHAT_GPT_PATH = '/v1/chat/completions';
+const BASE_URL = 'http://localhost:3006/api/openai';
+const CHAT_GPT_PATH = 'v1/chat/completions';
 
 // eslint-disable-next-line import/prefer-default-export
 export class ChatGPTApi implements LLMApi {
@@ -95,7 +95,8 @@ export class ChatGPTApi implements LLMApi {
         };
 
         controller.signal.onabort = finish;
-
+        console.log('chatPath: ', chatPath);
+        console.log('chatPayload: ', chatPayload);
         fetchEventSource(chatPath, {
           ...chatPayload,
           // eslint-disable-next-line consistent-return

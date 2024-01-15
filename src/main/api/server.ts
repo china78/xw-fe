@@ -1,11 +1,14 @@
 import express, { Express } from 'express';
 import { Server } from 'http';
+import cors from 'cors';
 
 const app = express();
-const port = 3000;
+app.use(cors());
+const port = 3006;
 let server: Server;
 
-app.get('/api/openai/v1/chat/completions', (req, res) => {
+app.post('/api/openai/v1/chat/completions', (req, res) => {
+  console.log('服务被触发！');
   res.send('IM GPT!');
 });
 

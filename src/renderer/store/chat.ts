@@ -116,10 +116,7 @@ export const useChatStore = createPersistStore(
           return messages.concat([userMessage, botMessage]);
         });
 
-        let api: ClientApi;
-        if (get().chatHistory.model === 'GPT') {
-          api = new ClientApi(ModelProvider.GPT);
-        }
+        const api: ClientApi = new ClientApi(ModelProvider.GPT);
 
         api.llm.chat({
           messages: recentMessages,

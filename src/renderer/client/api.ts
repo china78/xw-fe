@@ -48,7 +48,7 @@ export function getHeaders() {
   const authHeader = 'Authorization';
   const apiKey = OPENAI_API_KEY;
 
-  const makeBearer = (s: string) => `"Bearer "${s.trim()}`;
+  const makeBearer = (s: string) => `Bearer ${s.trim()}`;
   const validString = (x: string) => x && x.length > 0;
 
   if (validString(apiKey)) {
