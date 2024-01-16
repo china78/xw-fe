@@ -1,8 +1,11 @@
 import express, { Express } from 'express';
 import { Server } from 'http';
 import cors from 'cors';
+import { HttpProxyAgent } from 'http-proxy-agent';
+import fetch from 'electron-fetch';
 
 const GPT_API_BASE_URL = 'https://api.openai.com';
+const agent = new HttpProxyAgent('http://127.0.0.1:7890');
 
 const app = express();
 app.use(cors());
@@ -11,9 +14,6 @@ const port = 3006;
 let server: Server;
 
 app.post('/api/openai/v1/chat/completions', async (req, res) => {
-  console.log('服务被触发！ params', req.path);
-  console.log('服务被触发！ params', req.headers);
-
   const controller = new AbortController();
   const authValue = req.headers ? req.headers.authorization ?? '' : '';
   const authHeaderName = 'Authorization';
@@ -29,16 +29,12 @@ app.post('/api/openai/v1/chat/completions', async (req, res) => {
     baseUrl = baseUrl.slice(0, -1);
   }
 
-  console.log('[Proxy] ', path);
-  console.log('[Base Url]', baseUrl);
-
   const timeoutId = setTimeout(
     () => {
       controller.abort();
     },
     10 * 60 * 1000,
   );
-  console.log('------Request Body-------:', req.body);
 
   const fetchUrl = `${baseUrl}/${path}`;
   const fetchOptions = {
@@ -52,28 +48,20 @@ app.post('/api/openai/v1/chat/completions', async (req, res) => {
     redirect: 'manual',
     duplex: 'half',
     signal: controller.signal,
+    agent,
   };
 
   try {
-    const openAIRes = await fetch(fetchUrl, fetchOptions);
+    const response = await fetch(fetchUrl, fetchOptions);
 
-    console.log('openAIRes: ', openAIRes);
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
 
-    const newHeaders = new Headers(openAIRes.headers);
-    newHeaders.delete('www-authenticate');
-    newHeaders.set('X-Accel-Buffering', 'no');
-    newHeaders.delete('content-encoding');
-
-    // const responseBody = await openAIRes.json();
-
-    // console.log('从openai返回的: ', responseBody);
-
-    res.send({
-      body: openAIRes.body,
-      status: openAIRes.status,
-      statusText: openAIRes.statusText,
-      headers: newHeaders,
-    });
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const chunk of response.body) {
+      res.write(chunk.toString());
+    }
   } finally {
     clearTimeout(timeoutId);
   }

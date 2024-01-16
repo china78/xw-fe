@@ -2713,6 +2713,13 @@ agent-base@^6.0.2, agent-base@6:
   dependencies:
     debug "4"
 
+agent-base@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.npmjs.org/agent-base/-/agent-base-7.1.0.tgz"
+  integrity sha512-o/zjMZRhJxny7OyEF+Op8X+efiELC7k7yOjMzgfzVqOzXqkBkWI79YoTdOtsuWd5BWhAGAuOY/Xa6xpiaWXiNg==
+  dependencies:
+    debug "^4.3.4"
+
 agentkeepalive@^4.2.1:
   version "4.2.1"
   resolved "https://registry.npmjs.org/agentkeepalive/-/agentkeepalive-4.2.1.tgz"
@@ -4627,6 +4634,13 @@ electron-devtools-installer@^3.2.0:
     tslib "^2.1.0"
     unzip-crx-3 "^0.2.0"
 
+electron-fetch@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.npmjs.org/electron-fetch/-/electron-fetch-1.9.1.tgz"
+  integrity sha512-M9qw6oUILGVrcENMSRRefE1MbHPIz0h79EKIeJWK9v563aT9Qkh8aEHPO1H5vi970wPirNY+jO9OpFoLiMsMGA==
+  dependencies:
+    encoding "^0.1.13"
+
 electron-is-accelerator@^0.1.0:
   version "0.1.2"
   resolved "https://registry.npmjs.org/electron-is-accelerator/-/electron-is-accelerator-0.1.2.tgz"
@@ -6065,6 +6079,14 @@ http-proxy-agent@^5.0.0:
     "@tootallnate/once" "2"
     agent-base "6"
     debug "4"
+
+http-proxy-agent@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.npmjs.org/http-proxy-agent/-/http-proxy-agent-7.0.0.tgz"
+  integrity sha512-+ZT+iBxVUQ1asugqnD6oWoRiS25AkjNfG085dKJGtGxkdwLQrMKU5wJr2bOOFAXzKcTuqq+7fZlTMgG3SRfIYQ==
+  dependencies:
+    agent-base "^7.1.0"
+    debug "^4.3.4"
 
 http-proxy-middleware@^2.0.3:
   version "2.0.6"

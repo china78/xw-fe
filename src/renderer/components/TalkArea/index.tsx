@@ -8,14 +8,14 @@ export default function TalkArea() {
   const [chatHistory] = useChatStore((state) => [state.chatHistory]);
 
   const reloadGptRes = () => {
-    window.electron.ipcRenderer.sendMessage('get-gpt-response', chatHistory);
+    console.log('reload');
   };
 
   return (
     <div className="talkbox">
-      {chatHistory.messages.map((message: ChatMessage, index) => {
+      {chatHistory.messages.map((message: ChatMessage) => {
         return (
-          <div key={index} className="contentBox">
+          <div key={message.id} className="contentBox">
             <div className="itemBox">
               {message.role === 'assistant' ? (
                 <RedditOutlined style={{ fontSize: 20, color: 'cadetblue' }} />

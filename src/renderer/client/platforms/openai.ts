@@ -64,13 +64,8 @@ export class ChatGPTApi implements LLMApi {
         let remainText = '';
         let finished = false;
 
-
         // eslint-disable-next-line no-inner-declarations
         function animateResponseText() {
-          console.log(
-            '----------controller.signal: ---------',
-            controller.signal.aborted,
-          );
           if (finished || controller.signal.aborted) {
             responseText += remainText;
             console.log('[Response Animation] finished');
@@ -101,13 +96,11 @@ export class ChatGPTApi implements LLMApi {
         };
 
         controller.signal.onabort = finish;
-        console.log('chatPath: ', chatPath);
-        console.log('chatPayload: ', chatPayload);
+
         fetchEventSource(chatPath, {
           ...chatPayload,
           // eslint-disable-next-line consistent-return
           async onopen(res) {
-            console.log('------------ Connection opened: --------', res);
             clearTimeout(requestTimeoutId);
             const contentType = res.headers.get('content-type');
             console.log(
@@ -176,7 +169,6 @@ export class ChatGPTApi implements LLMApi {
             finish();
           },
           onerror(e) {
-            console.log('------- fetchEventSource.error ----- : ', e)
             options.onError?.(e);
             throw e;
           },

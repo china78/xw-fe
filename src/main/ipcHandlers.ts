@@ -1,10 +1,7 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron';
 import path from 'path';
 import fs from 'fs';
-import { Readable } from 'node:stream';
 import { readDirectoryAsync } from './util';
-import { fetchGPTResponse } from './api';
-import { UserMessage } from '../renderer/types/UserMessage.type';
 
 // const openai = new OpenAI();
 
@@ -52,41 +49,6 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
       }
     });
   });
-
-  ipcMain.on(
-    'get-gpt-response',
-    async (event, request: { messages: UserMessage; model: string }) => {
-      console.log('渲染进程传递来的参数', request);
-      try {
-        const gptResponse = await fetchGPTResponse(request);
-        event.sender.send('gpt-response', null, {
-          data: gptResponse.choices[0].message,
-        });
-        // console.log('stream data -', gptResponse.toString());
-        // const lines = gptResponse
-        //   .toString()
-        //   .split('\n\n')
-        //   .filter((line) => line.trim() !== '');
-        // // console.log('lines: ', lines);
-        // lines.forEach((line) => {
-        //   const message = line.replace('data: ', '');
-        //   if (message === '[DONE]') {
-        //     return;
-        //   }
-        //   try {
-        //     const parsed = JSON.parse(message);
-        //     const chunk = parsed.choices[0].delta.content;
-        //     console.log('chunk -', chunk);
-        //     event.sender.send('gpt-response', null, { chunk });
-        //   } catch (error) {
-        //     console.error('Error parsing JSON:', error);
-        //   }
-        // });
-      } catch (error) {
-        event.sender.send('gpt-response', null, { error: error.message });
-      }
-    },
-  );
 };
 
 export default setupIPCHandlers;
