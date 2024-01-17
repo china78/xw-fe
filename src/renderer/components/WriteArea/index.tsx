@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
 import { Button, Upload } from 'antd';
 import { UploadOutlined, ArrowUpOutlined } from '@ant-design/icons';
-import { UserMessage } from '../../types/UserMessage.type';
 import './styles.css';
 import { useChatStore } from '../../store/chat';
 
@@ -13,7 +12,6 @@ export default function WriteArea() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const chatStore = useChatStore.getState();
-  const [chatHistory] = useChatStore((state) => [state.chatHistory]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -71,12 +69,12 @@ export default function WriteArea() {
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      handleSend();
-    }
-  };
+  // const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  //   if (event.key === 'Enter' && !event.shiftKey) {
+  //     event.preventDefault();
+  //     handleSend();
+  //   }
+  // };
 
   return (
     <div className="writeBox">
@@ -91,7 +89,7 @@ export default function WriteArea() {
         placeholder="输入消息..."
         value={text}
         onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
+        // onKeyDown={handleKeyDown}
         className="textarea focus input"
         style={{ maxHeight: 200 }}
       />

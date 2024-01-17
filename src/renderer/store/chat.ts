@@ -127,6 +127,7 @@ export const useChatStore = createPersistStore(
           messages: recentMessages,
           config: { model: get().chatHistory.model, stream: true }, // 这里暂时先不加 其他 modelConfig
           onUpdate(message) {
+            console.log('------------------ api.llm.chat.onUpdate--------------------: ', message);
             botMessage.streaming = true;
             if (message) {
               botMessage.content = message;

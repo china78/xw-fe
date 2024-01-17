@@ -77,8 +77,8 @@ export class ChatGPTApi implements LLMApi {
             const fetchText = remainText.slice(0, fetchCount);
             responseText += fetchText;
             remainText = remainText.slice(fetchCount);
-            console.log('-------- responseText: -------', responseText)
-            console.log('-------- fetchText: -------', fetchText)
+            // console.log('-------- responseText: -------', responseText)
+            // console.log('-------- fetchText: -------', fetchText)
             options.onUpdate?.(responseText, fetchText);
           }
 
@@ -144,7 +144,8 @@ export class ChatGPTApi implements LLMApi {
           },
           // eslint-disable-next-line consistent-return
           onmessage(msg) {
-            console.log('---------msg----------: ', msg);
+            // console.log('---------msg----------: ', msg);
+            // console.log('---------remainText----------: ', remainText);
             if (msg.data === '[DONE]' || finished) {
               return finish();
             }
@@ -158,6 +159,7 @@ export class ChatGPTApi implements LLMApi {
                 }>;
               };
               const delta = json.choices[0]?.delta?.content;
+              // console.log('---------delta----------: ', delta);
               if (delta) {
                 remainText += delta;
               }

@@ -57,7 +57,6 @@ app.post('/api/openai/v1/chat/completions', async (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-
     // eslint-disable-next-line no-restricted-syntax
     for await (const chunk of response.body) {
       res.write(chunk.toString());
