@@ -111,11 +111,11 @@ const createWindow = async () => {
     });
   });
 
-  globalShortcut.register('CommandOrControl+R', () => {
-    // 执行禁用刷新的操作
-    mainWindow?.webContents.sendInputEvent({ type: 'keyDown', keyCode: 'R' });
-    mainWindow?.webContents.sendInputEvent({ type: 'keyUp', keyCode: 'R' });
-  });
+  // globalShortcut.register('CommandOrControl+R', () => {
+  //   // 执行禁用刷新的操作
+  //   mainWindow?.webContents.sendInputEvent({ type: 'keyDown', keyCode: 'R' });
+  //   mainWindow?.webContents.sendInputEvent({ type: 'keyUp', keyCode: 'R' });
+  // });
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line

@@ -1,11 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, RefObject } from 'react';
 import {
   PlayCircleOutlined,
   RobotOutlined,
   SmileOutlined,
   DoubleLeftOutlined,
   DoubleRightOutlined,
+  CloseSquareOutlined,
+  SwitcherOutlined,
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { Tree, FloatButton } from 'antd';
 import type { DirectoryTreeProps } from 'antd/es/tree';
 import { Directory } from '../../main/util';
@@ -30,18 +33,19 @@ export default function Editor(props: Props) {
   const { treeData } = props;
   const [pannelOpen, setPannelOpen] = useState(true);
   const [selectedFilePath, setSelectedFilePath] = useState<string>('');
-  const [eventTitle, setEventTitle] = useState('');
   const [openDraw, setOpenDraw] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState('');
   const { DirectoryTree } = Tree;
   const treeStore = useTreeStore.getState();
   const chatStore = useChatStore.getState();
+  const defaultExpandedKeys = [treeData[0].key];
   const [tabs, fileContent, filename, fileDesc] = useTreeStore((state) => [
     state.tabs,
     state.fileContent,
     state.fileName,
     state.fileDesc,
   ]);
+  const navigator = useNavigate();
 
   const floatButtonInfo: FloatButtonInfo[] = [
     {
@@ -151,27 +155,28 @@ export default function Editor(props: Props) {
       chatStore.resetMessages();
       treeStore.setFileName(selectedFileName);
       treeStore.setFileDesc(description!);
-      setEventTitle(tooltip);
-      // 触发主进程 以文件内容为参数，请求 gpt接口，渲染反馈到 drawer 面板
-      // 文件内容 - selectedFileContent 当前描述 - description
-      // const requestParams = {
-      //   model: chatHistory.model,
-      //   messages: [
-      //     {
-      //       role: 'user',
-      //       content: `${selectedFileName}\n${fileContent}\n${description}`,
-      //     },
-      //   ],
-      // };
-      // window.electron.ipcRenderer.sendMessage(
-      //   'get-gpt-response',
-      //   requestParams,
-      // );
-      // 走仓库
       const evtDes = `${selectedFileName}\n${fileContent}\n${description}`;
       chatStore.onUserInput(evtDes);
     }
     setOpenDraw(true);
+  };
+
+  const renderTitle = (nodeData: any) => {
+    if (nodeData.isRoot) {
+      return (
+        <div className="rootTree">
+          <div>{nodeData.title}</div>
+          <div>
+            <SwitcherOutlined onClick={() => {}} />
+            <CloseSquareOutlined
+              style={{ marginLeft: 10 }}
+              onClick={() => navigator('/')}
+            />
+          </div>
+        </div>
+      );
+    }
+    return <div>{nodeData.title}</div>;
   };
 
   return (
@@ -191,6 +196,7 @@ export default function Editor(props: Props) {
       >
         {treeData && (
           <DirectoryTree
+            titleRender={renderTitle}
             rootStyle={{
               paddingRight: 10,
               paddingLeft: 10,
@@ -201,7 +207,7 @@ export default function Editor(props: Props) {
             onSelect={onSelect}
             onExpand={onExpand}
             treeData={treeData}
-            defaultExpandedKeys={[treeData[0].key]}
+            defaultExpandedKeys={defaultExpandedKeys}
           />
         )}
       </div>

@@ -3,4 +3,19 @@
 }
 .ant-tree-switcher {
   width: 10px!important;
+
+}
+
+.rootTree {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ant-tree-node-content-wrapper {
+  display: flex;
+}
+
+.ant-tree-title {
+  width: 100%;
 }

@@ -26,6 +26,7 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
         const rootFileName = path.basename(selectedDirectory);
         const rootStructure = [
           {
+            isRoot: true,
             key: selectedDirectory,
             title: rootFileName,
             children: projectStructure,
