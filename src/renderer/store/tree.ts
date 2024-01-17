@@ -10,6 +10,7 @@ interface InitialState {
   activeKey: string;
   fileName: string;
   fileContent: string;
+  fileDesc: string;
 }
 
 const DEFAULT_TREE: InitialState = {
@@ -17,6 +18,7 @@ const DEFAULT_TREE: InitialState = {
   activeKey: '',
   fileName: '',
   fileContent: '',
+  fileDesc: '',
 };
 
 // eslint-disable-next-line import/prefer-default-export
@@ -53,6 +55,11 @@ export const useTreeStore = createPersistStore(
     setFileContent(content: string) {
       set(() => ({
         fileContent: content,
+      }));
+    },
+    setFileDesc(desc: string) {
+      set(() => ({
+        fileDesc: desc,
       }));
     },
   }),

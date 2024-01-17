@@ -11,6 +11,7 @@ type ExtractType = {
     wordCount: number;
     charCount: number;
   };
+  controller: AbortController | null;
 };
 export interface ChatState {
   chatHistory: CreateChatCompletionRequest & ExtractType;
@@ -26,6 +27,7 @@ const DEFAULT_CHAT_TREE: ChatState = {
       wordCount: 0,
       charCount: 0,
     },
+    controller: null,
   },
 };
 
@@ -127,7 +129,7 @@ export const useChatStore = createPersistStore(
           messages: recentMessages,
           config: { model: get().chatHistory.model, stream: true }, // 这里暂时先不加 其他 modelConfig
           onUpdate(message) {
-            console.log('------------------ api.llm.chat.onUpdate--------------------: ', message);
+            // console.log('------------------ api.llm.chat.onUpdate--------------------: ', message);
             botMessage.streaming = true;
             if (message) {
               botMessage.content = message;
@@ -147,9 +149,25 @@ export const useChatStore = createPersistStore(
             console.log(err);
           },
           onController(controller) {
-            console.log(controller);
+            if (controller) {
+              get().setController(controller);
+            }
           },
         });
+      },
+      setController(controller: AbortController) {
+        set((state) => ({
+          chatHistory: {
+            ...state.chatHistory,
+            controller,
+          },
+        }));
+      },
+      abortController() {
+        const ct = get().chatHistory?.controller;
+        if (ct && 'abort' in ct) {
+          ct?.abort();
+        }
       },
     };
 

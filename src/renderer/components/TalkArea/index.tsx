@@ -1,4 +1,9 @@
-import { RedditOutlined, UserOutlined, RedoOutlined } from '@ant-design/icons';
+import {
+  RedditOutlined,
+  UserOutlined,
+  RedoOutlined,
+  PauseOutlined,
+} from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import { ChatMessage } from '../../types';
 import './styles.css';
@@ -6,15 +11,22 @@ import { useChatStore } from '../../store/chat';
 import { Markdown } from '../Markdown';
 
 export default function TalkArea() {
+  const chatStore = useChatStore.getState();
   const [chatHistory] = useChatStore((state) => [state.chatHistory]);
 
   const reloadGptRes = () => {
     console.log('reload');
   };
 
+  function handlePause() {
+    chatStore.abortController();
+  }
+
+  // console.log('controller?.signal: ', controller?.signal);
+
   return (
     <div className="talkbox">
-      {chatHistory.messages.map((message: ChatMessage) => {
+      {chatHistory.messages.slice(1).map((message: ChatMessage) => {
         const isUser = message.role === 'user';
         return (
           <div key={message.id} className="contentBox">
@@ -38,12 +50,21 @@ export default function TalkArea() {
               <Tooltip title="重新发送">
                 <Button
                   color="#404040"
-                  size="small"
                   icon={<RedoOutlined />}
                   type="link"
                   onClick={reloadGptRes}
                 />
               </Tooltip>
+              {message.streaming && (
+                <Tooltip title="暂停">
+                  <Button
+                    color="#404040"
+                    icon={<PauseOutlined />}
+                    type="link"
+                    onClick={() => handlePause()}
+                  />
+                </Tooltip>
+              )}
             </div>
           </div>
         );

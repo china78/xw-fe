@@ -59,7 +59,10 @@ function FeedBack(props: Props) {
     <Button
       size="small"
       icon={<CloseOutlined />}
-      onClick={() => setOpenDraw(false)}
+      onClick={() => {
+        setOpenDraw(false);
+        chatStore.abortController();
+      }}
     />
   );
 

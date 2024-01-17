@@ -36,10 +36,11 @@ export default function Editor(props: Props) {
   const { DirectoryTree } = Tree;
   const treeStore = useTreeStore.getState();
   const chatStore = useChatStore.getState();
-  const [chatHistory] = useChatStore((state) => [state.chatHistory]);
-  const [tabs, fileContent] = useTreeStore((state) => [
+  const [tabs, fileContent, filename, fileDesc] = useTreeStore((state) => [
     state.tabs,
     state.fileContent,
+    state.fileName,
+    state.fileDesc,
   ]);
 
   const floatButtonInfo: FloatButtonInfo[] = [
@@ -51,7 +52,7 @@ export default function Editor(props: Props) {
     {
       tooltip: '评估代码质量',
       icon: <PlayCircleOutlined />,
-      type: 'primary',
+      // type: 'primary',
       description: '请评估当前代码的质量，是否有不合规或者耗性能，及冗余的写法',
     },
     {
@@ -63,7 +64,7 @@ export default function Editor(props: Props) {
     {
       tooltip: null,
       icon: <DoubleLeftOutlined />,
-      // type: 'primary',
+      type: 'primary',
     },
   ];
 
@@ -148,6 +149,8 @@ export default function Editor(props: Props) {
     // 如果是非展开事件
     if (tooltip) {
       chatStore.resetMessages();
+      treeStore.setFileName(selectedFileName);
+      treeStore.setFileDesc(description!);
       setEventTitle(tooltip);
       // 触发主进程 以文件内容为参数，请求 gpt接口，渲染反馈到 drawer 面板
       // 文件内容 - selectedFileContent 当前描述 - description
@@ -230,7 +233,7 @@ export default function Editor(props: Props) {
         )}
       </div>
       <FeedBack
-        title={`${selectedFileName} - ${eventTitle}`}
+        title={`${filename} - ${fileDesc}`}
         openDraw={openDraw}
         setOpenDraw={setOpenDraw}
       />
