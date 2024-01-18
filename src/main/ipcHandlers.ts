@@ -39,6 +39,31 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
     }
   });
 
+  // 文件
+  ipcMain.on('open-file-dialog', async () => {
+    try {
+      const result = await dialog.showOpenDialog(mainWindow!, {
+        properties: ['openFile'],
+      });
+      if (!result.canceled && result.filePaths.length > 0) {
+        const selectedFilePath = result.filePaths[0];
+        const fileName = path.basename(selectedFilePath);
+        // 处理打开文件的逻辑...
+        const fileStructure = [
+          {
+            key: selectedFilePath,
+            title: fileName,
+            isLeaf: true,
+            isRoot: true,
+          },
+        ];
+        mainWindow?.webContents.send('project-structure', fileStructure);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
   // 读取指定的文件路径
   ipcMain.on('get-file-content', (event, filePath) => {
     // 异步读取文件

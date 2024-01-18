@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState, RefObject } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   PlayCircleOutlined,
   RobotOutlined,
@@ -6,7 +6,6 @@ import {
   DoubleLeftOutlined,
   DoubleRightOutlined,
   CloseSquareOutlined,
-  SwitcherOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { Tree, FloatButton } from 'antd';
@@ -39,12 +38,15 @@ export default function Editor(props: Props) {
   const treeStore = useTreeStore.getState();
   const chatStore = useChatStore.getState();
   const defaultExpandedKeys = [treeData[0].key];
-  const [tabs, fileContent, filename, fileDesc] = useTreeStore((state) => [
-    state.tabs,
-    state.fileContent,
-    state.fileName,
-    state.fileDesc,
-  ]);
+  const [tabs, fileContent, filename, fileDesc, activeKey] = useTreeStore(
+    (state) => [
+      state.tabs,
+      state.fileContent,
+      state.fileName,
+      state.fileDesc,
+      state.activeKey,
+    ],
+  );
   const navigator = useNavigate();
 
   const floatButtonInfo: FloatButtonInfo[] = [
@@ -79,29 +81,28 @@ export default function Editor(props: Props) {
       if (err) {
         console.error(err);
       } else {
-        console.log(content);
         treeStore.setFileContent(content);
       }
     });
   }, [treeStore]);
 
   // 每次点要去tabs[]检查是否已经有label(文件名)存在的文件了，有的话，不添加，把key设置为activeKey
-  const triggerTab = (filePath: string, filename: string) => {
-    const existFile = tabs.find((tab) => tab.label === filename);
+  const triggerTab = (filePath: string, fileName: string) => {
+    const existFile = tabs.find((tab) => tab.label === fileName);
     if (!existFile) {
-      treeStore.addTab({ key: filePath, label: filename });
+      treeStore.addTab({ key: filePath, label: fileName });
     }
-    treeStore.setFileName(filename);
+    treeStore.setFileName(fileName);
     treeStore.setActiveKey(filePath);
   };
 
   const onSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
     const filePath = keys[0] as string;
-    const { isLeaf, title: filename } = info.node as any; // 是文件才去要内容
+    const { isLeaf, title: fileName } = info.node as any; // 是文件才去要内容
     setSelectedFilePath(filePath);
     if (isLeaf && filePath) {
       // 创建新tab标签
-      triggerTab(filePath, filename);
+      triggerTab(filePath, fileName);
       // 向主进程请求文件内容
       window.electron.ipcRenderer.sendMessage('get-file-content', filePath);
     }
@@ -130,10 +131,10 @@ export default function Editor(props: Props) {
     const extension = selectedFilePath.substring(
       selectedFilePath.lastIndexOf('.'),
     );
-    const filename = selectedFilePath.substring(
+    const fileName = selectedFilePath.substring(
       selectedFilePath.lastIndexOf('/'),
     );
-    setSelectedFileName(filename.slice(1));
+    setSelectedFileName(fileName.slice(1));
     // 去掉文件扩展名前面的点 (.)
     return extension ?? '';
   }, [selectedFilePath]);
@@ -167,10 +168,14 @@ export default function Editor(props: Props) {
         <div className="rootTree">
           <div>{nodeData.title}</div>
           <div>
-            <SwitcherOutlined onClick={() => {}} />
+            {/* <SwitcherOutlined onClick={() => {}} /> */}
             <CloseSquareOutlined
               style={{ marginLeft: 10 }}
-              onClick={() => navigator('/')}
+              onClick={() => {
+                treeStore.clearAllTabs();
+                treeStore.clearAllData();
+                navigator('/');
+              }}
             />
           </div>
         </div>
@@ -208,6 +213,7 @@ export default function Editor(props: Props) {
             onExpand={onExpand}
             treeData={treeData}
             defaultExpandedKeys={defaultExpandedKeys}
+            // defaultSelectedKeys={[activeKey]}
           />
         )}
       </div>

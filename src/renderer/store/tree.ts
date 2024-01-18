@@ -5,12 +5,15 @@ interface Tabs {
   children?: string; // null
   key: string; // 文件路径
 }
+
+type OpenType = 'file' | 'folder';
 interface InitialState {
   tabs: Tabs[];
   activeKey: string;
   fileName: string;
   fileContent: string;
   fileDesc: string;
+  currentOpenType: OpenType;
 }
 
 const DEFAULT_TREE: InitialState = {
@@ -19,6 +22,7 @@ const DEFAULT_TREE: InitialState = {
   fileName: '',
   fileContent: '',
   fileDesc: '',
+  currentOpenType: 'file',
 };
 
 // eslint-disable-next-line import/prefer-default-export
@@ -35,6 +39,11 @@ export const useTreeStore = createPersistStore(
             key: tab.key,
           },
         ],
+      }));
+    },
+    setCurrentOpenType(type: OpenType) {
+      set(() => ({
+        currentOpenType: type,
       }));
     },
     removeTab(key: string) {
@@ -60,6 +69,14 @@ export const useTreeStore = createPersistStore(
     setFileDesc(desc: string) {
       set(() => ({
         fileDesc: desc,
+      }));
+    },
+    clearAllData() {
+      localStorage.clear();
+    },
+    clearAllTabs() {
+      set(() => ({
+        tabs: [],
       }));
     },
   }),
