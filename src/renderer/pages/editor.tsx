@@ -139,7 +139,7 @@ export default function Editor(props: Props) {
     // 如果是非展开事件
     if (tooltip) {
       chatStore.resetMessages();
-      treeStore.setFileName(selectedFileName);
+      // treeStore.setFileName(selectedFileName);
       treeStore.setFileDesc(description!);
       const evtDes = `${selectedFileName}\n${fileContent}\n${description}`;
       chatStore.onUserInput(evtDes);
@@ -177,6 +177,10 @@ export default function Editor(props: Props) {
     return <div>{nodeData.title}</div>;
   };
 
+  const showBtns = useMemo(() => {
+    return tabs.length > 0 || treeStore.currentOpenType === 'file';
+  }, [tabs.length, treeStore.currentOpenType]);
+
   return (
     <div style={layoutStyle}>
       <div
@@ -212,7 +216,8 @@ export default function Editor(props: Props) {
       </div>
       {doorHandle}
       <div style={contentStyle}>
-        {tabs.length > 0 && (
+        {/* 文件状态下 检查栏目是展示的 */}
+        {showBtns && (
           <div className="headerBox">
             <EditorTabs />
             <FloatButton.Group shape="square" style={{ right: 40, top: 90 }}>

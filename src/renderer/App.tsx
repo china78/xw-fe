@@ -37,11 +37,11 @@ function OutSide(props: OutSideProps) {
     treeStore.setActiveKey(key);
     window.electron.ipcRenderer.sendMessage('get-file-content', key);
     // 设置顶部标签
-    const fileTab = {
-      label: title,
-      key,
-    };
-    treeStore.addTab(fileTab);
+    // const fileTab = {
+    //   label: title,
+    //   key,
+    // };
+    // treeStore.addTab(fileTab);
   }
 
   function preClean() {
