@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   PlayCircleOutlined,
   RobotOutlined,
@@ -38,15 +38,12 @@ export default function Editor(props: Props) {
   const treeStore = useTreeStore.getState();
   const chatStore = useChatStore.getState();
   const defaultExpandedKeys = [treeData[0].key];
-  const [tabs, fileContent, filename, fileDesc, activeKey] = useTreeStore(
-    (state) => [
-      state.tabs,
-      state.fileContent,
-      state.fileName,
-      state.fileDesc,
-      state.activeKey,
-    ],
-  );
+  const [tabs, fileContent, filename, fileDesc] = useTreeStore((state) => [
+    state.tabs,
+    state.fileContent,
+    state.fileName,
+    state.fileDesc,
+  ]);
   const navigator = useNavigate();
 
   const floatButtonInfo: FloatButtonInfo[] = [
@@ -73,18 +70,6 @@ export default function Editor(props: Props) {
       type: 'primary',
     },
   ];
-
-  // 预先注册点击事件，以备当文件被点击，显示对应的代码内容
-  useEffect(() => {
-    window.electron.ipcRenderer.on('file-content', (_event, args: any) => {
-      const { err, content } = args;
-      if (err) {
-        console.error(err);
-      } else {
-        treeStore.setFileContent(content);
-      }
-    });
-  }, [treeStore]);
 
   // 每次点要去tabs[]检查是否已经有label(文件名)存在的文件了，有的话，不添加，把key设置为activeKey
   const triggerTab = (filePath: string, fileName: string) => {
@@ -162,6 +147,14 @@ export default function Editor(props: Props) {
     setOpenDraw(true);
   };
 
+  function cleanCache() {
+    treeStore.clearAllTabs();
+    treeStore.setFileName('');
+    treeStore.setActiveKey('');
+    treeStore.setFileContent('');
+    treeStore.setCurrentOpenType(null);
+  }
+
   const renderTitle = (nodeData: any) => {
     if (nodeData.isRoot) {
       return (
@@ -171,9 +164,9 @@ export default function Editor(props: Props) {
             {/* <SwitcherOutlined onClick={() => {}} /> */}
             <CloseSquareOutlined
               style={{ marginLeft: 10 }}
-              onClick={() => {
-                treeStore.clearAllTabs();
-                treeStore.clearAllData();
+              onClick={(e) => {
+                e.stopPropagation();
+                cleanCache();
                 navigator('/');
               }}
             />

@@ -32,7 +32,7 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
             children: projectStructure,
           },
         ];
-        mainWindow?.webContents.send('project-structure', rootStructure);
+        mainWindow?.webContents.send('init-tree-structure', rootStructure);
       }
     } catch (error) {
       console.error(error);
@@ -57,7 +57,7 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
             isRoot: true,
           },
         ];
-        mainWindow?.webContents.send('project-structure', fileStructure);
+        mainWindow?.webContents.send('init-tree-structure', fileStructure);
       }
     } catch (error) {
       console.error(error);

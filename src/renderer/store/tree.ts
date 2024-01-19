@@ -6,7 +6,7 @@ interface Tabs {
   key: string; // 文件路径
 }
 
-type OpenType = 'file' | 'folder';
+type OpenType = 'file' | 'folder' | null;
 interface InitialState {
   tabs: Tabs[];
   activeKey: string;
@@ -72,7 +72,7 @@ export const useTreeStore = createPersistStore(
       }));
     },
     clearAllData() {
-      localStorage.clear();
+      window.localStorage.clear();
     },
     clearAllTabs() {
       set(() => ({

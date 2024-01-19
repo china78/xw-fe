@@ -40,14 +40,17 @@ function OutSide(props: OutSideProps) {
     treeStore.addTab(fileTab);
   }
 
+  function preClean() {
+    treeStore.clearAllTabs();
+  }
+
   useEffect(() => {
-    window.electron.ipcRenderer.on('project-structure', (arg: any) => {
+    window.electron.ipcRenderer.on('init-tree-structure', (arg: any) => {
       if (arg) {
+        preClean();
         setTree(arg);
-        // 打开文件就到此为止了，没有下面的操作，
+        console.log('这里到底是啥?', currentOpenType)
         if (currentOpenType === 'file') {
-          // 打开文件后的操作
-          treeStore.clearAllTabs();
           operateFile(arg);
         }
         navigator('editor');
@@ -55,15 +58,31 @@ function OutSide(props: OutSideProps) {
     });
   }, []);
 
+  // 预先注册点击事件，以备当文件被点击，显示对应的代码内容
+  useEffect(() => {
+    window.electron.ipcRenderer.on('file-content', (_event, args: any) => {
+      const { err, content } = args;
+      if (err) {
+        console.error(err);
+      } else {
+        treeStore.setFileContent(content);
+      }
+    });
+  }, [treeStore]);
+
+  type FileType = 'file' | 'folder';
+
+  function openDialog(fileType: FileType) {
+    treeStore.setCurrentOpenType(fileType);
+    window.electron.ipcRenderer.sendMessage(`open-${fileType}-dialog`);
+  }
+
   const handleOpenFolder = () => {
-    window.electron.ipcRenderer.sendMessage('open-folder-dialog');
-    treeStore.setCurrentOpenType('folder');
+    openDialog('folder');
   };
 
   const handleOpenFile = () => {
-    // 每次打开都要清空缓存
-    window.electron.ipcRenderer.sendMessage('open-file-dialog');
-    treeStore.setCurrentOpenType('file');
+    openDialog('file');
   };
 
   return (
