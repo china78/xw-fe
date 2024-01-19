@@ -28,7 +28,7 @@ export default function WriteArea() {
     if (target) {
       target!.style.height = 'auto'; // 重置高度以获得正确的滚动高度
       const { scrollHeight } = target;
-      target.style.height = scrollHeight > 200 ? '200px' : `${scrollHeight}px`;
+      target.style.height = scrollHeight > 300 ? '300px' : `${scrollHeight}px`;
     }
     if (event.target.value === '') {
       target!.style.height = 'auto'; // 重置高度以获得正确的滚动高度
@@ -91,7 +91,7 @@ export default function WriteArea() {
         onChange={handleInputChange}
         // onKeyDown={handleKeyDown}
         className="textarea focus input"
-        style={{ maxHeight: 200 }}
+        style={{ maxHeight: 300 }}
       />
 
       {/* 发送按钮 */}
