@@ -30,6 +30,7 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
             key: selectedDirectory,
             title: rootFileName,
             children: projectStructure,
+            currentOpenType: 'folder',
           },
         ];
         mainWindow?.webContents.send('init-tree-structure', rootStructure);
@@ -55,6 +56,7 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
             title: fileName,
             isLeaf: true,
             isRoot: true,
+            currentOpenType: 'file',
           },
         ];
         mainWindow?.webContents.send('init-tree-structure', fileStructure);

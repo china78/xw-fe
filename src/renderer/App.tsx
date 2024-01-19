@@ -24,6 +24,10 @@ function OutSide(props: OutSideProps) {
   interface Arg {
     key: string;
     title: string;
+    currentOpenType: string;
+    isRoot?: boolean;
+    children?: string;
+    isLeaf?: boolean;
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -48,8 +52,8 @@ function OutSide(props: OutSideProps) {
     window.electron.ipcRenderer.on('init-tree-structure', (arg: any) => {
       if (arg) {
         preClean();
+        treeStore.setCurrentOpenType(arg[0].currentOpenType);
         setTree(arg);
-        console.log('这里到底是啥?', currentOpenType)
         if (currentOpenType === 'file') {
           operateFile(arg);
         }
@@ -70,19 +74,12 @@ function OutSide(props: OutSideProps) {
     });
   }, [treeStore]);
 
-  type FileType = 'file' | 'folder';
-
-  function openDialog(fileType: FileType) {
-    treeStore.setCurrentOpenType(fileType);
-    window.electron.ipcRenderer.sendMessage(`open-${fileType}-dialog`);
-  }
-
   const handleOpenFolder = () => {
-    openDialog('folder');
+    window.electron.ipcRenderer.sendMessage('open-folder-dialog');
   };
 
   const handleOpenFile = () => {
-    openDialog('file');
+    window.electron.ipcRenderer.sendMessage('open-file-dialog');
   };
 
   return (
