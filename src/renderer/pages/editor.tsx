@@ -6,8 +6,10 @@ import {
   DoubleLeftOutlined,
   DoubleRightOutlined,
   CloseSquareOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import * as monaco from 'monaco-editor';
 import { Tree, FloatButton } from 'antd';
 import type { DirectoryTreeProps } from 'antd/es/tree';
 import { Directory } from '../../main/util';
@@ -28,12 +30,16 @@ interface FloatButtonInfo {
   type?: string;
 }
 
+// export type Position = { lineNumber: number; column: number };
+
 export default function Editor(props: Props) {
   const { treeData } = props;
   const [pannelOpen, setPannelOpen] = useState(true);
   const [selectedFilePath, setSelectedFilePath] = useState<string>('');
   const [openDraw, setOpenDraw] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState('');
+  const [position, setPosition] = useState<monaco.Position>();
+  const [showHelpPropmt, setShowHelpPropmt] = useState(false);
   const { DirectoryTree } = Tree;
   const treeStore = useTreeStore.getState();
   const chatStore = useChatStore.getState();
@@ -181,6 +187,17 @@ export default function Editor(props: Props) {
     return tabs.length > 0 || treeStore.currentOpenType === 'file';
   }, [tabs.length, treeStore.currentOpenType]);
 
+  function helpPrompt(text: string, pt: monaco.Position) {
+    console.log('-----text: ', text)
+    console.log('-----pt: ', pt)
+    if (text && pt) {
+      setPosition(pt);
+      setShowHelpPropmt(true);
+    } else {
+      setShowHelpPropmt(false);
+    }
+  }
+  console.log('position ', position);
   return (
     <div style={layoutStyle}>
       <div
@@ -220,7 +237,10 @@ export default function Editor(props: Props) {
         {showBtns && (
           <div className="headerBox">
             <EditorTabs />
-            <FloatButton.Group shape="square" style={{ right: 40, top: 90 }}>
+            <FloatButton.Group
+              shape="square"
+              style={{ right: 40, top: 90, height: 'fit-content' }}
+            >
               {floatButtonInfo.map((button) => (
                 <FloatButton
                   key={button.tooltip}
@@ -238,6 +258,9 @@ export default function Editor(props: Props) {
             <EditorMainContent
               fileContent={fileContent}
               fileExtension={fileExtension}
+              handleChange={(t, p) => {
+                // helpPrompt()
+              }}
             />
           </div>
         )}
@@ -246,6 +269,16 @@ export default function Editor(props: Props) {
         title={`${filename} - ${fileDesc}`}
         openDraw={openDraw}
         setOpenDraw={setOpenDraw}
+      />
+      <FloatButton
+        icon={<QuestionCircleOutlined />}
+        style={{
+          display: showHelpPropmt ? 'block' : 'none',
+          top: position?.lineNumber,
+          bottom: position?.lineNumber,
+        }}
+        tooltip="有疑问？"
+        onClick={() => console.log('onClick')}
       />
     </div>
   );

@@ -1,15 +1,18 @@
 import * as monaco from 'monaco-editor';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { debounce } from 'lodash';
 import { extensionToLanguageMap } from '../../config/fileMappings';
 
 interface Props {
   fileContent: string;
   fileExtension: string;
+  handleChange: (text: string | undefined, position: monaco.Position) => void;
 }
 
 export default function EditorMainCintent(props: Props) {
-  const { fileContent, fileExtension } = props;
+  const { fileContent, fileExtension, handleChange } = props;
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const [keyup, setKeyup] = useState(false);
 
   useEffect(() => {
     // 根据文件扩展名获取对应的语言
@@ -26,6 +29,25 @@ export default function EditorMainCintent(props: Props) {
       editorRef.current = editor;
     }
 
+    editorRef.current.onMouseUp((e) => {
+      setKeyup(true);
+    });
+
+    const handleSelectionChange = debounce((pt) => {
+      // 每次抬起都检查一下
+      if (keyup) {
+        const selection = editorRef.current?.getSelection();
+        const selectedCode = editorRef.current?.getModel().getValueInRange(selection!) as string | undefined;
+        // 在这里对选中的代码内容进行处理
+        handleChange(selectedCode, pt);
+      }
+    }, 300);
+
+    // 有内容并且抬起的时候才显示
+    editorRef.current.onDidChangeCursorPosition((event) => {
+      handleSelectionChange(event?.position);
+    });
+
     // 更新编辑器的语言和内容
     if (editorRef.current) {
       editorRef.current.setModel(
@@ -40,7 +62,7 @@ export default function EditorMainCintent(props: Props) {
         editorRef.current = null;
       }
     };
-  }, [fileContent, fileExtension]);
+  }, [fileContent, fileExtension, keyup]);
 
   return <div id="editor" style={{ height: '100vh' }} />;
 }

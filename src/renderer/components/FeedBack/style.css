@@ -10,7 +10,7 @@
   left: 0;
   height: 100%;
   width: 8px; /* 宽度可以根据需要调整 */
-  background-color: #0000001f;
+  background-color: #404040;
   cursor: ew-resize;
 }
 
@@ -20,7 +20,7 @@
   left: 0;
   height: 8px;
   width: 100%; /* 宽度可以根据需要调整 */
-  background-color: #0000001f;
+  background-color: #404040;
   cursor: ns-resize;
 }
 
