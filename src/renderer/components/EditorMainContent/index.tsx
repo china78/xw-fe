@@ -2,6 +2,7 @@ import * as monaco from 'monaco-editor';
 import { useEffect, useRef } from 'react';
 import { debounce } from 'lodash';
 import { extensionToLanguageMap } from '../../config/fileMappings';
+import { useChatStore } from '../../store';
 
 export type MouseType = {
   x: number;
@@ -16,6 +17,7 @@ interface Props {
 export default function EditorMainCintent(props: Props) {
   const { fileContent, fileExtension, handleChange } = props;
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const chatStore = useChatStore.getState();
 
   useEffect(() => {
     // 根据文件扩展名获取对应的语言
@@ -33,6 +35,7 @@ export default function EditorMainCintent(props: Props) {
     const handleSelectionChange = debounce((mp) => {
       const selection = editorRef.current?.getSelection();
       const stcd = editorRef.current?.getModel().getValueInRange(selection!);
+      chatStore.setSelectedCode(stcd);
       // console.log('坐标: ', mp);
       // console.log('内容: ', stcd);
       handleChange(stcd, mp);
@@ -41,8 +44,8 @@ export default function EditorMainCintent(props: Props) {
     // 有内容并且抬起的时候才显示
     editorRef.current.onMouseUp((event) => {
       const mousePst = {
-        x: event.event.browserEvent.clientX + 10,
-        y: event.event.browserEvent.clientY,
+        x: event.event.browserEvent.clientX + 30,
+        y: event.event.browserEvent.clientY - 80,
       };
       handleSelectionChange(mousePst);
     });

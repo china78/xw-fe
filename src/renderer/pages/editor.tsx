@@ -6,7 +6,6 @@ import {
   DoubleLeftOutlined,
   DoubleRightOutlined,
   CloseSquareOutlined,
-  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { Tree, FloatButton } from 'antd';
@@ -41,6 +40,9 @@ export default function Editor(props: Props) {
   const treeStore = useTreeStore.getState();
   const chatStore = useChatStore.getState();
   const defaultExpandedKeys = [treeData[0].key];
+  const [selectedCode] = useChatStore((state) => [
+    state.chatHistory.selectedCode,
+  ]);
   const [tabs, fileContent, filename, fileDesc] = useTreeStore((state) => [
     state.tabs,
     state.fileContent,
@@ -144,7 +146,9 @@ export default function Editor(props: Props) {
       chatStore.resetMessages();
       // treeStore.setFileName(selectedFileName);
       treeStore.setFileDesc(description!);
-      const evtDes = `${selectedFileName}\n${fileContent}\n${description}`;
+      // 优先局部框选代码内容，其次全局内容
+      const content = selectedCode ?? fileContent;
+      const evtDes = `${selectedFileName}\n${content}\n${description}`;
       chatStore.onUserInput(evtDes);
     }
     setOpenDraw(true);
@@ -193,6 +197,24 @@ export default function Editor(props: Props) {
     }
   }
 
+  const fbtPst = useMemo(() => {
+    if (showHelpPropmt) {
+      return {
+        top: position?.y,
+        left: position?.x,
+        height: 'fit-content',
+        transition: 'all .5s ease 0s',
+      };
+    }
+    // 原位
+    return {
+      top: 90,
+      right: 40,
+      height: 'fit-content',
+      transition: 'all .5s ease 0s',
+    };
+  }, [showHelpPropmt, position]);
+
   return (
     <div style={layoutStyle}>
       <div
@@ -232,10 +254,7 @@ export default function Editor(props: Props) {
         {showBtns && (
           <div className="headerBox">
             <EditorTabs />
-            <FloatButton.Group
-              shape="square"
-              style={{ right: 40, top: 90, height: 'fit-content' }}
-            >
+            <FloatButton.Group shape="square" style={fbtPst}>
               {floatButtonInfo.map((button) => (
                 <FloatButton
                   key={button.tooltip}
@@ -262,19 +281,6 @@ export default function Editor(props: Props) {
         title={`${filename} - ${fileDesc}`}
         openDraw={openDraw}
         setOpenDraw={setOpenDraw}
-      />
-      <FloatButton
-        icon={<QuestionCircleOutlined />}
-        type="primary"
-        style={{
-          width: 30,
-          height: 30,
-          display: showHelpPropmt ? 'block' : 'none',
-          top: position?.y,
-          left: position?.x,
-        }}
-        tooltip="有疑问？"
-        onClick={() => console.log('onClick')}
       />
     </div>
   );

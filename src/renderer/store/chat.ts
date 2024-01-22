@@ -12,6 +12,7 @@ type ExtractType = {
     charCount: number;
   };
   controller: AbortController | null;
+  selectedCode: string;
 };
 export interface ChatState {
   chatHistory: CreateChatCompletionRequest & ExtractType;
@@ -28,6 +29,7 @@ const DEFAULT_CHAT_TREE: ChatState = {
       charCount: 0,
     },
     controller: null,
+    selectedCode: '',
   },
 };
 
@@ -86,10 +88,12 @@ export const useChatStore = createPersistStore(
             const newCharCount =
               state.chatHistory.stat.charCount + message.content.length;
             return {
-              ...state.chatHistory,
-              stat: {
-                ...state.chatHistory.stat,
-                charCount: newCharCount,
+              chatHistory: {
+                ...state.chatHistory,
+                stat: {
+                  ...state.chatHistory.stat,
+                  charCount: newCharCount,
+                },
               },
             };
           }
@@ -168,6 +172,14 @@ export const useChatStore = createPersistStore(
         if (ct && 'abort' in ct) {
           ct?.abort();
         }
+      },
+      setSelectedCode(selectedCode: string) {
+        set((state) => ({
+          chatHistory: {
+            ...state.chatHistory,
+            selectedCode,
+          },
+        }));
       },
     };
 

@@ -63,7 +63,7 @@ export function Mermaid(props: MermaidProps) {
       }}
       ref={ref}
     >
-      {props.code}
+      {code}
     </div>
   );
 }
