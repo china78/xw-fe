@@ -18,6 +18,7 @@ import './style.css';
 import { useTreeStore } from '../store/tree';
 import { useChatStore } from '../store/chat';
 import Bighandles from '../components/BigHandles';
+import { getExtension } from '../utils/format';
 
 interface Props {
   treeData: Directory[];
@@ -32,9 +33,7 @@ interface FloatButtonInfo {
 export default function Editor(props: Props) {
   const { treeData } = props;
   const [pannelOpen, setPannelOpen] = useState(true);
-  const [selectedFilePath, setSelectedFilePath] = useState<string>('');
   const [openDraw, setOpenDraw] = useState(false);
-  const [selectedFileName, setSelectedFileName] = useState('');
   const [position, setPosition] = useState<{ x: number; y: number }>();
   const [showHelpPropmt, setShowHelpPropmt] = useState(false);
   const { DirectoryTree } = Tree;
@@ -89,8 +88,10 @@ export default function Editor(props: Props) {
 
   const onSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
     const filePath = keys[0] as string;
+    const fileExtension = getExtension(filePath);
     const { isLeaf, title: fileName } = info.node as any; // 是文件才去要内容
-    setSelectedFilePath(filePath);
+    treeStore.setFileExtension(fileExtension);
+
     if (isLeaf && filePath) {
       // 创建新tab标签
       triggerTab(filePath, fileName);
@@ -107,19 +108,6 @@ export default function Editor(props: Props) {
     display: 'flex',
     minHeight: '100vh',
   };
-
-  const fileExtension = useMemo(() => {
-    // 使用字符串方法获取文件扩展名
-    const extension = selectedFilePath.substring(
-      selectedFilePath.lastIndexOf('.'),
-    );
-    const fileName = selectedFilePath.substring(
-      selectedFilePath.lastIndexOf('/'),
-    );
-    setSelectedFileName(fileName.slice(1));
-    // 去掉文件扩展名前面的点 (.)
-    return extension ?? '';
-  }, [selectedFilePath]);
 
   const doorHandle = useMemo(() => {
     return (
@@ -142,11 +130,10 @@ export default function Editor(props: Props) {
     // 如果是非展开事件
     if (tooltip) {
       chatStore.resetMessages();
-      // treeStore.setFileName(selectedFileName);
       treeStore.setFileDesc(description!);
       // 优先局部框选代码内容，其次全局内容
       const content = selectedCode.trim() === '' ? fileContent : selectedCode;
-      const evtDes = `${selectedFileName}\n${content}\n${description}`;
+      const evtDes = `${filename}\n${content}\n${description}`;
       chatStore.onUserInput(evtDes);
     }
     setOpenDraw(true);
@@ -230,7 +217,6 @@ export default function Editor(props: Props) {
             onExpand={onExpand}
             treeData={treeData}
             defaultExpandedKeys={defaultExpandedKeys}
-            // defaultSelectedKeys={[activeKey]}
           />
         )}
       </div>
@@ -257,7 +243,6 @@ export default function Editor(props: Props) {
           <div className="monaco-container">
             <EditorMainContent
               fileContent={fileContent}
-              fileExtension={fileExtension}
               handleChange={(t, p) => helpPrompt(t, p)}
             />
           </div>

@@ -12,3 +12,8 @@ export function prettyObject(msg: any) {
   }
   return ['```json', msg, '```'].join('\n');
 }
+
+export function getExtension(filePath: string) {
+  const extension = filePath.substring(filePath.lastIndexOf('.'));
+  return extension ?? '';
+}

@@ -11,6 +11,7 @@ import Editor from './pages/editor';
 import './App.css';
 import { Directory } from '../main/util';
 import { useTreeStore } from './store/tree';
+import { getExtension } from './utils/format';
 
 interface OutSideProps {
   setTree: (data: Directory[]) => void;
@@ -36,12 +37,6 @@ function OutSide(props: OutSideProps) {
     treeStore.setFileName(title);
     treeStore.setActiveKey(key);
     window.electron.ipcRenderer.sendMessage('get-file-content', key);
-    // 设置顶部标签
-    // const fileTab = {
-    //   label: title,
-    //   key,
-    // };
-    // treeStore.addTab(fileTab);
   }
 
   function preClean() {
@@ -56,6 +51,9 @@ function OutSide(props: OutSideProps) {
         setTree(arg);
         if (currentOpenType === 'file') {
           operateFile(arg);
+          // 要设置文件后缀
+          const fileExtension = getExtension(arg[0].key);
+          treeStore.setFileExtension(fileExtension);
         }
         navigator('editor');
       }

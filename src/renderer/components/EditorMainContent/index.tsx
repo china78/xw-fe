@@ -2,7 +2,7 @@ import * as monaco from 'monaco-editor';
 import { useEffect, useRef } from 'react';
 import { debounce } from 'lodash';
 import { extensionToLanguageMap } from '../../config/fileMappings';
-import { useChatStore } from '../../store';
+import { useChatStore, useTreeStore } from '../../store';
 
 export type MouseType = {
   x: number;
@@ -10,14 +10,14 @@ export type MouseType = {
 };
 interface Props {
   fileContent: string;
-  fileExtension: string;
   handleChange: (text: string | undefined, position: MouseType) => void;
 }
 
 export default function EditorMainCintent(props: Props) {
-  const { fileContent, fileExtension, handleChange } = props;
+  const { fileContent, handleChange } = props;
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const chatStore = useChatStore.getState();
+  const [fileExtension] = useTreeStore((state) => [state.fileExtension]);
 
   useEffect(() => {
     // 根据文件扩展名获取对应的语言

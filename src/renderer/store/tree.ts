@@ -14,6 +14,7 @@ interface InitialState {
   fileContent: string;
   fileDesc: string;
   currentOpenType: OpenType;
+  fileExtension: string;
 }
 
 const DEFAULT_TREE: InitialState = {
@@ -23,6 +24,7 @@ const DEFAULT_TREE: InitialState = {
   fileContent: '',
   fileDesc: '',
   currentOpenType: 'file',
+  fileExtension: '',
 };
 
 // eslint-disable-next-line import/prefer-default-export
@@ -39,6 +41,11 @@ export const useTreeStore = createPersistStore(
             key: tab.key,
           },
         ],
+      }));
+    },
+    setFileExtension(ext: string) {
+      set(() => ({
+        fileExtension: ext,
       }));
     },
     setCurrentOpenType(type: OpenType) {
