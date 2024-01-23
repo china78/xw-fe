@@ -19,3 +19,27 @@
 .ant-tree-title {
   width: 100%;
 }
+
+.treeContainer {
+  min-width: 200px;
+  max-width: 300px;
+  width: auto;
+  max-height: 100vh;
+  overflow: scroll;
+  white-space: nowrap;
+  background-color: #252526;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.contentStyle {
+  flex: 1;
+  overflow-y: auto;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.fbt {
+  height: fit-content;
+  transition: all .5s ease 0s;
+  opacity: 0.9;
+}

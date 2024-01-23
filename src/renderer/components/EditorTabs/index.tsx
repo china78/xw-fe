@@ -45,6 +45,7 @@ export default function EditorTabs() {
 
   return (
     <Tabs
+      style={{ overflowX: 'auto' }}
       hideAdd
       size="small"
       onChange={onChange}

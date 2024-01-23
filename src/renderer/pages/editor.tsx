@@ -17,6 +17,7 @@ import FeedBack from '../components/FeedBack';
 import './style.css';
 import { useTreeStore } from '../store/tree';
 import { useChatStore } from '../store/chat';
+import Bighandles from '../components/BigHandles';
 
 interface Props {
   treeData: Directory[];
@@ -107,15 +108,6 @@ export default function Editor(props: Props) {
     minHeight: '100vh',
   };
 
-  const contentStyle: React.CSSProperties = {
-    flex: '1',
-    overflowY: 'auto',
-    height: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    // borderRight: '2px solid #191919',
-    // padding: '10px',
-  };
-
   const fileExtension = useMemo(() => {
     // 使用字符串方法获取文件扩展名
     const extension = selectedFilePath.substring(
@@ -133,7 +125,13 @@ export default function Editor(props: Props) {
     return (
       <FloatButton
         icon={pannelOpen ? <DoubleLeftOutlined /> : <DoubleRightOutlined />}
-        style={{ width: 30, height: 30, left: pannelOpen ? 210 : 20, top: 310 }}
+        style={{
+          width: 30,
+          height: 30,
+          left: 45,
+          top: 310,
+          opacity: 0.2,
+        }}
         onClick={() => setPannelOpen(!pannelOpen)}
       />
     );
@@ -147,7 +145,7 @@ export default function Editor(props: Props) {
       // treeStore.setFileName(selectedFileName);
       treeStore.setFileDesc(description!);
       // 优先局部框选代码内容，其次全局内容
-      const content = selectedCode ?? fileContent;
+      const content = selectedCode.trim() === '' ? fileContent : selectedCode;
       const evtDes = `${selectedFileName}\n${content}\n${description}`;
       chatStore.onUserInput(evtDes);
     }
@@ -202,33 +200,21 @@ export default function Editor(props: Props) {
       return {
         top: position?.y,
         left: position?.x,
-        height: 'fit-content',
-        transition: 'all .5s ease 0s',
       };
     }
     // 原位
     return {
       top: 90,
       right: 40,
-      height: 'fit-content',
-      transition: 'all .5s ease 0s',
     };
   }, [showHelpPropmt, position]);
 
   return (
     <div style={layoutStyle}>
+      <Bighandles />
       <div
-        style={{
-          minWidth: 200,
-          maxWidth: 300,
-          display: pannelOpen ? 'block' : 'none',
-          width: 'auto',
-          maxHeight: '100vh',
-          overflow: 'scroll',
-          whiteSpace: 'nowrap',
-          backgroundColor: '#343541',
-          boxShadow: '2px 0 5px rgba(0, 0, 0, 0.2)',
-        }}
+        className="treeContainer"
+        style={{ display: pannelOpen ? 'block' : 'none' }}
       >
         {treeData && (
           <DirectoryTree
@@ -249,12 +235,12 @@ export default function Editor(props: Props) {
         )}
       </div>
       {doorHandle}
-      <div style={contentStyle}>
+      <div className="contentStyle">
         {/* 文件状态下 检查栏目是展示的 */}
         {showBtns && (
           <div className="headerBox">
             <EditorTabs />
-            <FloatButton.Group shape="square" style={fbtPst}>
+            <FloatButton.Group shape="square" style={fbtPst} className="fbt">
               {floatButtonInfo.map((button) => (
                 <FloatButton
                   key={button.tooltip}

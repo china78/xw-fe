@@ -68,12 +68,18 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
 
   // 读取指定的文件路径
   ipcMain.on('get-file-content', (event, filePath) => {
-    // 异步读取文件
-    fs.readFile(filePath, 'utf-8', (err, content) => {
+    fs.stat(filePath, (err, stats) => {
       if (err) {
         event.sender.send('file-content', null, { err: err.message });
-      } else {
-        event.sender.send('file-content', null, { content });
+      } else if (stats.isFile()) {
+        // 异步读取文件
+        fs.readFile(filePath, 'utf-8', (err, content) => {
+          if (err) {
+            event.sender.send('file-content', null, { err: err.message });
+          } else {
+            event.sender.send('file-content', null, { content });
+          }
+        });
       }
     });
   });
