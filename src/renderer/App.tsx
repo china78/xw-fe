@@ -73,10 +73,12 @@ function OutSide(props: OutSideProps) {
   }, [treeStore]);
 
   const handleOpenFolder = () => {
+    console.log('打开文件夹')
     window.electron.ipcRenderer.sendMessage('open-folder-dialog');
   };
 
   const handleOpenFile = () => {
+    console.log('打开文件')
     window.electron.ipcRenderer.sendMessage('open-file-dialog');
   };
 
