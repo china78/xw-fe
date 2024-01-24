@@ -46,6 +46,7 @@ class PJParser {
     this.#createMetaDataJson();
     this.#createCompressedBlocks();
     const originContent = this.#sourceProject();
+    console.log('--------------- metadataList -------------: ', this.#metadataList);
     console.log('--------------- originContent -------------: ', originContent);
   }
 
@@ -83,6 +84,9 @@ class PJParser {
         }
         fileList.push(...this.#traverseDirectory(filePath));
       } else {
+        if (file === 'package-lock.json' || file === '.DS_Store') {
+          return;
+        }
         fileList.push(filePath);
       }
     });
@@ -111,7 +115,9 @@ class PJParser {
   #createCompressedBlocks() {
     this.#fileList.forEach((filePath) => {
       if (fs.existsSync(filePath)) {
-        const fileContent: Buffer = fs.readFileSync(filePath);
+        const fileHeader = Buffer.from(`===${filePath}===\n`);
+        const content: Buffer = fs.readFileSync(filePath);
+        const fileContent = Buffer.concat([fileHeader, content]);
         const chunks = Math.ceil(fileContent.length / this.#blockLength);
         for (let i = 0; i < chunks; i++) {
           const start = i * this.#blockLength;
