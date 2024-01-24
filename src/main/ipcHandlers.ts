@@ -84,7 +84,9 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
   });
 
   ipcMain.on('init-pjparser', (event, dirPath: string) => {
+    console.log('dirPath: ', dirPath)
     const pjp = new PJParser(dirPath);
+    console.log('pjppjppjp: ', pjp)
     event.sender.send('pjp-instance', null, { pjp });
   });
 };

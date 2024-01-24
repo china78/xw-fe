@@ -7,6 +7,7 @@ export default function Bighandles() {
   const treeStore = useTreeStore.getState();
 
   window.electron.ipcRenderer.on('pjp-instance', (_event, args: any) => {
+    console.log('args', args);
     const { err, pjp } = args;
     if (err) {
       console.error(err);
@@ -17,10 +18,12 @@ export default function Bighandles() {
   });
 
   function handleAnalyseProject() {
-    window.electron.ipcRenderer.sendMessage(
-      'init-pjparser',
-      treeStore.rootDirPath,
-    );
+    if (treeStore.rootDirPath) {
+      window.electron.ipcRenderer.sendMessage(
+        'init-pjparser',
+        treeStore.rootDirPath,
+      );
+    }
   }
 
   return (

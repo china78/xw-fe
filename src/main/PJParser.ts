@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { Buffer } from 'node:buffer';
+import zlib from 'zlib';
 
 type MetaData = {
   filePath: string;
@@ -16,6 +17,8 @@ class PJParser {
 
   #metadataList: MetaData[] = [];
 
+  #metadataJson: string = '';
+
   #compressedBlocks: Buffer[] = [];
 
   #blockLength = 1024;
@@ -24,21 +27,51 @@ class PJParser {
     return this.#metadataList;
   }
 
+  get metadataJson() {
+    return this.#metadataJson;
+  }
+
   get compressedBlocks() {
     return this.#compressedBlocks;
   }
 
   constructor(dirPath: string) {
     this.#rootDirPath = dirPath;
+    this.#init();
   }
 
-  init() {
+  #init() {
     this.#fileList = this.#traverseDirectory(this.#rootDirPath);
     this.#metadataList = this.#createMetaData(this.#fileList);
+    this.#createMetaDataJson();
+    this.#createCompressedBlocks();
+    const originContent = this.#sourceProject();
+    console.log('--------------- originContent -------------: ', originContent);
+  }
+
+  // 还原项目
+  #sourceProject() {
+    let offset = 0;
+    const fileContents: string[] = [];
+    this.#metadataList.forEach((metadata: MetaData) => {
+      const { blocks } = metadata;
+      const fileBuffer = [];
+
+      for (let i = 0; i < blocks; i++) {
+        const compressedChunk = this.#compressedBlocks[offset + i];
+        const chunk = this.#decompressData(compressedChunk);
+        fileBuffer.push(chunk);
+      }
+
+      const fileContent = Buffer.concat(fileBuffer);
+      fileContents.push(fileContent.toString());
+      offset += blocks;
+    });
+    return fileContents;
   }
 
   #traverseDirectory(dirPath: string) {
-    const files = fs.readFileSync(dirPath);
+    const files = fs.readdirSync(dirPath);
     const fileList: string[] = [];
 
     files.forEach((file: string) => {
@@ -71,28 +104,34 @@ class PJParser {
     });
   }
 
-  createMetaDataJson() {
-    const metadataFilePath = `${this.#rootDirPath}/metadata.json`;
-    const metadataJson = JSON.stringify(this.#metadataList);
-    fs.writeFileSync(metadataFilePath, metadataJson);
+  #createMetaDataJson() {
+    this.#metadataJson = JSON.stringify(this.#metadataList);
   }
 
-  createCompressedBlocks() {
+  #createCompressedBlocks() {
     this.#fileList.forEach((filePath) => {
-      const fileContent: Buffer = fs.readFileSync(filePath);
-      const chunks = Math.ceil(fileContent.length / this.#blockLength);
-      for (let i = 0; i < chunks; i++) {
-        const start = i * this.#blockLength;
-        const end = Math.min((i + 1) * this.#blockLength, fileContent.length);
-        const chunk = fileContent.subarray(start, end);
-        const compressedChunk = this.#compresseData(chunk);
-        this.#compressedBlocks.push(compressedChunk);
+      if (fs.existsSync(filePath)) {
+        const fileContent: Buffer = fs.readFileSync(filePath);
+        const chunks = Math.ceil(fileContent.length / this.#blockLength);
+        for (let i = 0; i < chunks; i++) {
+          const start = i * this.#blockLength;
+          const end = Math.min((i + 1) * this.#blockLength, fileContent.length);
+          const chunk = fileContent.subarray(start, end);
+          const compressedChunk = this.#compresseData(chunk);
+          this.#compressedBlocks.push(compressedChunk);
+        }
       }
     });
   }
 
   #compresseData(chunk: Buffer) {
-    return chunk;
+    const compressedChunk = zlib.deflateSync(chunk);
+    return compressedChunk;
+  }
+
+  #decompressData(chunk: Buffer) {
+    const decompressedChunk = zlib.inflateSync(chunk);
+    return decompressedChunk;
   }
 }
 export default PJParser;
