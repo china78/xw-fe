@@ -47,6 +47,10 @@ function OutSide(props: OutSideProps) {
     window.electron.ipcRenderer.on('init-tree-structure', (arg: any) => {
       if (arg) {
         preClean();
+        // 存根路径，备【分析整体项目】传参
+        if (currentOpenType === 'folder') {
+          treeStore.setRootDirPath(arg[0].key);
+        }
         treeStore.setCurrentOpenType(arg[0].currentOpenType);
         setTree(arg);
         if (currentOpenType === 'file') {
@@ -73,12 +77,10 @@ function OutSide(props: OutSideProps) {
   }, [treeStore]);
 
   const handleOpenFolder = () => {
-    console.log('打开文件夹')
     window.electron.ipcRenderer.sendMessage('open-folder-dialog');
   };
 
   const handleOpenFile = () => {
-    console.log('打开文件')
     window.electron.ipcRenderer.sendMessage('open-file-dialog');
   };
 

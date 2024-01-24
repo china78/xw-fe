@@ -71,13 +71,13 @@ class PJParser {
     });
   }
 
-  #createMetaDataJson() {
+  createMetaDataJson() {
     const metadataFilePath = `${this.#rootDirPath}/metadata.json`;
     const metadataJson = JSON.stringify(this.#metadataList);
     fs.writeFileSync(metadataFilePath, metadataJson);
   }
 
-  #createCompressedBlocks() {
+  createCompressedBlocks() {
     this.#fileList.forEach((filePath) => {
       const fileContent: Buffer = fs.readFileSync(filePath);
       const chunks = Math.ceil(fileContent.length / this.#blockLength);

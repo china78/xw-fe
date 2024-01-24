@@ -2,8 +2,7 @@ import { ipcMain, dialog, BrowserWindow } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { readDirectoryAsync } from './util';
-
-// const openai = new OpenAI();
+import PJParser from './PJParser';
 
 const setupIPCHandlers = (mainWindow: BrowserWindow) => {
   ipcMain.on('ipc-example', async (event, arg) => {
@@ -82,6 +81,11 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
         });
       }
     });
+  });
+
+  ipcMain.on('init-pjparser', (event, dirPath: string) => {
+    const pjp = new PJParser(dirPath);
+    event.sender.send('pjp-instance', null, { pjp });
   });
 };
 
