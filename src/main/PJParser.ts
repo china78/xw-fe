@@ -23,6 +23,10 @@ class PJParser {
 
   #blockLength = 1024;
 
+  #maxFileSize = 10 * 1024 * 1024; // 10MB
+
+  #sizeInKB = 0;
+
   get metadataList() {
     return this.#metadataList;
   }
@@ -46,8 +50,9 @@ class PJParser {
     this.#createMetaDataJson();
     this.#createCompressedBlocks();
     const originContent = this.#sourceProject();
-    console.log('--------------- metadataList -------------: ', this.#metadataList);
-    console.log('--------------- originContent -------------: ', originContent);
+    // console.log('--------------- metadataList -------------: ', this.#metadataList);
+    // console.log('--------------- originContent -------------: ', originContent);
+    this.#getSizeInBytes();
   }
 
   // 还原项目
@@ -112,32 +117,86 @@ class PJParser {
     this.#metadataJson = JSON.stringify(this.#metadataList);
   }
 
+  #splitAndProcessFile(filePath: string) {
+    const fileContent: Buffer = fs.readFileSync(filePath);
+    let offset = 0;
+    const fileSize = fileContent.length;
+
+    while (offset < fileSize) {
+      const end = Math.min(offset + this.#maxFileSize, fileSize);
+      const chunk = fileContent.subarray(offset, end);
+      const compressedChunk = this.#compresseData(chunk);
+      this.#compressedBlocks.push(compressedChunk);
+      offset += this.#maxFileSize;
+    }
+  }
+
+  #processFile(filePath: string) {
+    try {
+      const fileHeader = Buffer.from(`===${filePath}===\n`);
+      const content: Buffer = fs.readFileSync(filePath);
+      const fileContent = Buffer.concat([fileHeader, content]);
+      const chunks = Math.ceil(fileContent.length / this.#blockLength);
+
+      for (let i = 0; i < chunks; i++) {
+        const start = i * this.#blockLength;
+        const end = Math.min((i + 1) * this.#blockLength, fileContent.length);
+        const chunk = fileContent.subarray(start, end);
+        const compressedChunk = this.#compresseData(chunk);
+        this.#compressedBlocks.push(compressedChunk);
+      }
+    } catch (error) {
+      console.error(`Error processing file: ${filePath}`, error);
+    }
+  }
+
   #createCompressedBlocks() {
     this.#fileList.forEach((filePath) => {
       if (fs.existsSync(filePath)) {
-        const fileHeader = Buffer.from(`===${filePath}===\n`);
-        const content: Buffer = fs.readFileSync(filePath);
-        const fileContent = Buffer.concat([fileHeader, content]);
-        const chunks = Math.ceil(fileContent.length / this.#blockLength);
-        for (let i = 0; i < chunks; i++) {
-          const start = i * this.#blockLength;
-          const end = Math.min((i + 1) * this.#blockLength, fileContent.length);
-          const chunk = fileContent.subarray(start, end);
-          const compressedChunk = this.#compresseData(chunk);
-          this.#compressedBlocks.push(compressedChunk);
+        const fileSize = fs.statSync(filePath).size;
+
+        if (fileSize <= this.#maxFileSize) {
+          this.#processFile(filePath);
+        } else {
+          this.#splitAndProcessFile(filePath);
         }
+        // const fileHeader = Buffer.from(`===${filePath}===\n`);
+        // const content: Buffer = fs.readFileSync(filePath);
+        // const fileContent = Buffer.concat([fileHeader, content]);
+        // const chunks = Math.ceil(fileContent.length / this.#blockLength);
+
+        // for (let i = 0; i < chunks; i++) {
+        //   const start = i * this.#blockLength;
+        //   const end = Math.min((i + 1) * this.#blockLength, fileContent.length);
+        //   const chunk = fileContent.subarray(start, end);
+        //   const compressedChunk = this.#compresseData(chunk);
+        //   this.#compressedBlocks.push(compressedChunk);
+        // }
       }
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
   #compresseData(chunk: Buffer) {
     const compressedChunk = zlib.deflateSync(chunk);
     return compressedChunk;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   #decompressData(chunk: Buffer) {
     const decompressedChunk = zlib.inflateSync(chunk);
     return decompressedChunk;
+  }
+
+  #getSizeInBytes() {
+    // 计算 compressedBlocks 的大小（以字节为单位）
+    const sizeInBytes = this.#compressedBlocks.reduce(
+      (total, block) => total + block.length,
+      0,
+    );
+    // 将字节数转换为 KB
+    this.#sizeInKB = sizeInBytes / 1024;
+    console.log(`compressedBlocks 大小为 ${this.#sizeInKB} KB`);
   }
 }
 export default PJParser;

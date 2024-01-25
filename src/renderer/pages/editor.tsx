@@ -198,7 +198,7 @@ export default function Editor(props: Props) {
 
   return (
     <div style={layoutStyle}>
-      <Bighandles />
+      <Bighandles setOpenDraw={setOpenDraw} />
       <div
         className="treeContainer"
         style={{ display: pannelOpen ? 'block' : 'none' }}

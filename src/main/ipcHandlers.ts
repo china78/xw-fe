@@ -83,11 +83,16 @@ const setupIPCHandlers = (mainWindow: BrowserWindow) => {
     });
   });
 
+  let pjp: PJParser;
   ipcMain.on('init-pjparser', (event, dirPath: string) => {
-    console.log('dirPath: ', dirPath)
-    const pjp = new PJParser(dirPath);
-    console.log('pjppjppjp: ', pjp)
-    event.sender.send('pjp-instance', null, { pjp });
+    if (!pjp) {
+      pjp = new PJParser(dirPath);
+    }
+    console.log('pjp.metadataJson: ', pjp.metadataJson);
+    console.log('pjp.compressedBlocks: ', pjp.compressedBlocks);
+    // console.log('什么情况');
+    const { metadataJson, compressedBlocks } = pjp;
+    event.sender.send('pjp-instance', null, { metadataJson, compressedBlocks });
   });
 };
 

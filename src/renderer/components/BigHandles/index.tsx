@@ -1,19 +1,35 @@
 import { Tooltip, Button } from 'antd';
 import { FolderOpenTwoTone, CalendarTwoTone } from '@ant-design/icons';
 import './styles.css';
-import { useTreeStore } from '../../store';
+import { useChatStore, useTreeStore } from '../../store';
 
-export default function Bighandles() {
+interface Props {
+  setOpenDraw: (oepn: boolean) => void;
+}
+export default function Bighandles(props: Props) {
+  const { setOpenDraw } = props;
   const treeStore = useTreeStore.getState();
+  const chatStore = useChatStore.getState();
 
   window.electron.ipcRenderer.on('pjp-instance', (_event, args: any) => {
-    console.log('args', args);
-    const { err, pjp } = args;
+    const { err, metadataJson, compressedBlocks } = args;
     if (err) {
+      // eslint-disable-next-line no-console
       console.error(err);
     } else {
-      console.log(pjp.metadataList);
-      console.log(pjp.compressedBlocks);
+      // console.log('-- pjp.metadataJson: --', metadataJson);
+      // console.log('-- pjp.compressedBlocks: --', compressedBlocks);
+      // if (metadataJson && compressedBlocks) {
+      //   const prompt = `
+      //   请分析整个项目,\n
+      //   项目的文件结构关系是这样的-${metadataJson},\n
+      //   所有的文件内容被转化为Buffer并压缩在了这里-${compressedBlocks},\n
+      //   是否可以直接解码解压二进制内容，并分析内容，是否需要我提供明确的解码方法\n
+      //   `;
+
+      //   chatStore.onUserInput(prompt);
+      //   setOpenDraw(true);
+      // }
     }
   });
 
