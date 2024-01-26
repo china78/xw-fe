@@ -160,18 +160,6 @@ class PJParser {
         } else {
           this.#splitAndProcessFile(filePath);
         }
-        // const fileHeader = Buffer.from(`===${filePath}===\n`);
-        // const content: Buffer = fs.readFileSync(filePath);
-        // const fileContent = Buffer.concat([fileHeader, content]);
-        // const chunks = Math.ceil(fileContent.length / this.#blockLength);
-
-        // for (let i = 0; i < chunks; i++) {
-        //   const start = i * this.#blockLength;
-        //   const end = Math.min((i + 1) * this.#blockLength, fileContent.length);
-        //   const chunk = fileContent.subarray(start, end);
-        //   const compressedChunk = this.#compresseData(chunk);
-        //   this.#compressedBlocks.push(compressedChunk);
-        // }
       }
     });
   }

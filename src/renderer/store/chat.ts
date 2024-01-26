@@ -30,6 +30,27 @@ const DEFAULT_CHAT_TREE: ChatState = {
     },
     controller: null,
     selectedCode: '',
+    tools: [
+      {
+        type: 'function',
+        function: {
+          name: 'buffer_to_String',
+          description:
+            '当分析整体项目时，将传递的compressedBlocks(Buffer类型)的全部项目内容，通过此函数解析回字符串，方便chatgpt理解语义',
+          parameters: {
+            type: 'object',
+            properties: {
+              compressedBlocks: {
+                type: 'Buffer',
+                description: '整体项目中所有文件内容被编码成了Buffer二进制内容',
+              },
+            },
+            require: ['compressedBlocks'],
+          },
+        },
+      },
+    ],
+    tool_choice: 'auto',
   },
 };
 
